@@ -12,7 +12,7 @@ const generateURL = (path, queryVars) => {
 
 export const creareUtilizator = async (email, parola, nume) => {
   try {
-    const res = await axios.put(generateURL("signup"), {
+    const res = await axios.put(generateURL("auth/signup"), {
       email: email,
       parola: parola,
       nume: nume,
@@ -25,7 +25,11 @@ export const creareUtilizator = async (email, parola, nume) => {
 
 export const login = async (email, parola) => {
   try {
-    const res = await axios.
+    const res = await axios.post(generateURL("auth/login"), {
+      email: email,
+      parola: parola,
+    });
+    return res.data;
   } catch (e) {
     throw Error(e);
   }
