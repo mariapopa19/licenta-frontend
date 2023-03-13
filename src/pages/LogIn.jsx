@@ -1,18 +1,17 @@
 import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import { login } from "../api";
+import { RoundedTextField } from "../components/TextField";
+import { RoundedButton } from "../components/RoundedButton";
 
 function Copyright(props) {
   return (
@@ -24,7 +23,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        Popa Maria
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -32,8 +31,33 @@ function Copyright(props) {
   );
 }
 
-const theme = createTheme();
+const theme = createTheme({
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: "#ffdde1",
+          backgroundImage: `linear-gradient(to right, #ffdde1, #ee9ca7)`,
+        },
+      },
+    },
+  },
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#ff4081",
+    },
+  },
+  typography: {
+    fontFamily: "'Inter', sans-serif",
+  },
+});
 
+
+const Titlu = styled(Typography)`
+  font-family: "Lobster", cursive;
+  font-weight: 700;
+`;
 export default function LogIn() {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
@@ -55,19 +79,21 @@ export default function LogIn() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
+          <Avatar
+            src="./images/1476408.avif"
+            variant="square"
+            sx={{ width: 60, height: 60 }}
+          ></Avatar>
+          <Titlu component="h1" variant="h4">
             Log in
-          </Typography>
+          </Titlu>
           <Box
             component="form"
             onSubmit={handleSubmit}
             noValidate
             sx={{ mt: 1 }}
           >
-            <TextField
+            <RoundedTextField
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
@@ -75,12 +101,12 @@ export default function LogIn() {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="Email"
               name="email"
               autoComplete="email"
               autoFocus
             />
-            <TextField
+            <RoundedTextField
               onChange={(e) => {
                 setPass(e.target.value);
               }}
@@ -88,32 +114,32 @@ export default function LogIn() {
               required
               fullWidth
               name="password"
-              label="Password"
+              label="Parolă"
               type="password"
               id="password"
               autoComplete="current-password"
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              label="Ține-mă minte"
             />
-            <Button
+            <RoundedButton
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
               Sign In
-            </Button>
+            </RoundedButton>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                  Forgot password?
+                  Ți-ai uitat parola?
                 </Link>
               </Grid>
               <Grid item>
                 <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                  {"Nu ai cont deja? Înregistrează-te"}
                 </Link>
               </Grid>
             </Grid>

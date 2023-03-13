@@ -1,10 +1,14 @@
 // import logo from './logo.svg';
 import './App.css';
+// import Navbar from './layout/NavBar';
 import SignUp from './pages/SignUp'
 
 function App() {
   return (
-    <SignUp />
+    // <Navbar>
+
+      <SignUp />
+    // </Navbar> 
     // <div className="App">
     //   <header className="App-header">
     //     <img src={logo} className="App-logo" alt="logo" />

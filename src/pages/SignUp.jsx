@@ -1,19 +1,16 @@
 import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { creareUtilizator } from "../api/index";
+import { createTheme, styled, ThemeProvider } from "@mui/material";
+import { RoundedTextField } from "../components/TextField";
+import { RoundedButton } from "../components/RoundedButton";
 
 function Copyright(props) {
   return (
@@ -25,7 +22,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        Popa Maria
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -33,7 +30,32 @@ function Copyright(props) {
   );
 }
 
-const theme = createTheme();
+const theme = createTheme({
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: "#ffdde1",
+          backgroundImage: `linear-gradient(to right, #ffdde1, #ee9ca7)`,
+        },
+      },
+    },
+  },
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#ff4081",
+    },
+  },
+  typography: {
+    fontFamily: "'Inter', sans-serif",
+  },
+});
+
+const Titlu = styled(Typography)`
+  font-family: "Lobster", cursive;
+  font-weight: 700;
+`;
 
 export default function SignUp() {
   const [firstName, setFirstName] = useState("");
@@ -69,9 +91,7 @@ export default function SignUp() {
             variant="square"
             sx={{ width: 60, height: 60 }}
           ></Avatar>
-          <Typography component="h1" variant="h5">
-            Sign up
-          </Typography>
+          <Titlu variant="h4">Creare cont</Titlu>
           <Box
             component="form"
             noValidate
@@ -80,7 +100,7 @@ export default function SignUp() {
           >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <TextField
+                <RoundedTextField
                   onChange={(e) => {
                     setFirstName(e.target.value);
                   }}
@@ -89,71 +109,63 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="firstName"
-                  label="First Name"
+                  label="Prenume"
                   autoFocus
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
+                <RoundedTextField
                   onChange={(e) => {
                     setLastName(e.target.value);
                   }}
                   required
                   fullWidth
                   id="lastName"
-                  label="Last Name"
+                  label="Nume de familie"
                   name="lastName"
                   autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
+                <RoundedTextField
                   onChange={(e) => {
                     setEmail(e.target.value);
                   }}
                   required
                   fullWidth
                   id="email"
-                  label="Email Address"
+                  label="Email"
                   name="email"
                   autoComplete="email"
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
+                <RoundedTextField
                   onChange={(e) => {
                     setPass(e.target.value);
                   }}
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Parolă"
                   type="password"
                   id="password"
                   autoComplete="new-password"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox value="allowExtraEmails" color="primary" />
-                  }
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid>
             </Grid>
-            <Button
+            <RoundedButton
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
-            </Button>
+              Înregistrare
+            </RoundedButton>
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="#" variant="body2">
-                  Already have an account? Sign in
+                  Ai deja cont? Click aici
                 </Link>
               </Grid>
             </Grid>
