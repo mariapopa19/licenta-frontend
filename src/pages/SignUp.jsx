@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -11,6 +10,7 @@ import { creareUtilizator } from "../api/index";
 import { createTheme, styled, ThemeProvider } from "@mui/material";
 import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
+import { Link } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -164,7 +164,7 @@ export default function SignUp() {
             </RoundedButton>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link to="login" relative="path">
                   Ai deja cont? Click aici
                 </Link>
               </Grid>

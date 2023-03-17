@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -12,6 +11,8 @@ import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import { login } from "../api";
 import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
+import { Link, useNavigate } from "react-router-dom";
+import { GeneralProvider } from "../context/GeneralContext";
 
 function Copyright(props) {
   return (
@@ -53,19 +54,35 @@ const theme = createTheme({
   },
 });
 
-
 const Titlu = styled(Typography)`
   font-family: "Lobster", cursive;
   font-weight: 700;
 `;
 export default function LogIn() {
+  const { token, setToken } = useContext(GeneralProvider);
+
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+
+  const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = await login(email, pass);
-    console.log(data);
+    try {
+      const res = await login(email, pass);
+      if (res.token) {
+        setToken(res.token);
+        localStorage.setItem(res.token);
+        navigate("/");
+      }
+      console.log(res);
+    } catch (e) {}
   };
+
+  useEffect(()=>{
+    if(!token) {
+      navigate('/');
+    }
+  }, [token, navigate]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -138,7 +155,7 @@ export default function LogIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link to="/" relative="path">
                   {"Nu ai cont deja? Înregistrează-te"}
                 </Link>
               </Grid>
