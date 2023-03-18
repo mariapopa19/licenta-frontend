@@ -31,6 +31,6 @@ export const login = async (email, parola) => {
     });
     return res.data;
   } catch (e) {
-    throw Error(e);
+    throw Error(e.message);
   }
 };

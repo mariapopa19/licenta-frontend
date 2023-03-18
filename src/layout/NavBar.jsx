@@ -8,24 +8,31 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import {  useNavigate } from "react-router-dom";
+import { GeneralContext } from "../context/GeneralContext";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
+  // const { token } = React.useContext(GeneralContext);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate()
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
   const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
+    if (localStorage.getItem('token') !== '') {
+      setAnchorElUser(event.currentTarget);
+    } else {
+      navigate('login')
+    }
   };
 
   const handleCloseNavMenu = () => {
@@ -35,6 +42,7 @@ function ResponsiveAppBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
 
   return (
     <AppBar position="static">
@@ -128,7 +136,6 @@ function ResponsiveAppBar() {
 
           <Box sx={{ flexGrow: 0 }}>
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              <Tooltip title="Open settings">
                 <IconButton
                   onClick={handleOpenUserMenu}
                   size="large"
@@ -136,7 +143,6 @@ function ResponsiveAppBar() {
                 >
                   <PersonRoundedIcon />
                 </IconButton>
-              </Tooltip>
               <Menu
                 sx={{ mt: "45px" }}
                 id="menu-appbar"

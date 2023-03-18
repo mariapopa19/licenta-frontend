@@ -59,10 +59,11 @@ const Titlu = styled(Typography)`
   font-weight: 700;
 `;
 export default function LogIn() {
-  const { token, setToken } = useContext(GeneralProvider);
+  // const { token, setToken } = useContext(GeneralProvider);
 
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [typeError, setTypeError] = useState(false)
 
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
@@ -70,19 +71,22 @@ export default function LogIn() {
     try {
       const res = await login(email, pass);
       if (res.token) {
-        setToken(res.token);
-        localStorage.setItem(res.token);
+        // setToken(res.token);
+        localStorage.setItem('token',res.token);
         navigate("/");
       }
       console.log(res);
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+      setTypeError(true)
+    }
   };
 
   useEffect(()=>{
-    if(!token) {
+    if(localStorage.getItem('token')) {
       navigate('/');
     }
-  }, [token, navigate]);
+  }, [ navigate]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -114,6 +118,8 @@ export default function LogIn() {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
+              error={typeError}
+              helperText={typeError ? 'Email-ul nu este corect' : ''}
               margin="normal"
               required
               fullWidth
@@ -127,6 +133,8 @@ export default function LogIn() {
               onChange={(e) => {
                 setPass(e.target.value);
               }}
+              error={typeError}
+              helperText={typeError ? 'Parola nu este corecta': ''}
               margin="normal"
               required
               fullWidth

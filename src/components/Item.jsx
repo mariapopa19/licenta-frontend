@@ -1,4 +1,4 @@
-import { Paper, styled, Typography } from "@mui/material";
+import {  Paper, styled, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 const Img = styled('img')({

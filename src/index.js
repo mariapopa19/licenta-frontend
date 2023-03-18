@@ -9,26 +9,33 @@ import LogIn from "./pages/LogIn";
 import Signup_Test from "./pages/Sigup-Test";
 import { StyledEngineProvider } from "@mui/material";
 import Home from "./pages/Home";
+import ErrorPage from "./pages/Error";
+import { GeneralProvider } from "./context/GeneralContext";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+    errorElement: <ErrorPage />,
   },
   {
     path: "login",
     element: <LogIn />,
+    // errorElement: <ErrorPage />,
   },
   {
     path: "test",
     element: <Signup_Test />,
+    // errorElement: <ErrorPage />,
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <StyledEngineProvider injectFirst>
-    <RouterProvider router={router} />
+    <RouterProvider router={router}>
+      <GeneralProvider />
+    </RouterProvider>
   </StyledEngineProvider>
 );
 
