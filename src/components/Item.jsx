@@ -8,7 +8,7 @@ const Img = styled('img')({
     maxHeight: '50%',
   });
 
-export function Item({numeProdus, pret, poza}) {
+export default function Item({numeProdus, pret, poza}) {
   return (
     <Paper
       sx={{

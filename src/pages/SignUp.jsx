@@ -10,7 +10,7 @@ import { creareUtilizator } from "../api/index";
 import { createTheme, styled, ThemeProvider } from "@mui/material";
 import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
-import { Link } from "react-router-dom";
+import { Link, Navigate, NavLink } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -164,9 +164,9 @@ export default function SignUp() {
             </RoundedButton>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link to="login" relative="path">
+                <NavLink to="/login" end>
                   Ai deja cont? Click aici
-                </Link>
+                </NavLink>
               </Grid>
             </Grid>
           </Box>

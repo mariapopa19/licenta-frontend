@@ -9,33 +9,37 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import {  useNavigate } from "react-router-dom";
-import { GeneralContext } from "../context/GeneralContext";
+import { useNavigate } from "react-router-dom";
+import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
+// import { GeneralContext } from "../context/GeneralContext";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["home", "admin"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-function ResponsiveAppBar() {
+function NavBar() {
   // const { token } = React.useContext(GeneralContext);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const navigate = useNavigate()
+  // const [currentPage, setCurrentPgae] = React.useState('')
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
+    console.log(event.currentTarget);
     setAnchorElNav(event.currentTarget);
   };
   const handleOpenUserMenu = (event) => {
-    if (localStorage.getItem('token') !== '') {
+    if (localStorage.getItem("token") !== "") {
       setAnchorElUser(event.currentTarget);
     } else {
-      navigate('login')
+      navigate("login");
     }
   };
 
-  const handleCloseNavMenu = () => {
+  const handleCloseNavMenu = (value) => {
+    console.log(value);
+    value === "home" ? navigate("/") : navigate(`/${value}`);
     setAnchorElNav(null);
   };
 
@@ -43,12 +47,13 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
-
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          <DeliveryDiningIcon
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+          />
           <Typography
             variant="h6"
             noWrap
@@ -62,11 +67,11 @@ function ResponsiveAppBar() {
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
+              textTransform: 'uppercase'
             }}
           >
-            LOGO
+            Gifty
           </Typography>
-
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -97,52 +102,66 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem
+                  key={page}
+                  onClick={(event) => {
+                    handleCloseNavMenu(event.target.textContent);
+                  }}
+                >
+                  <Typography
+                    textAlign="center"
+                    sx={{ textTransform: "capitalize" }}
+                  >
+                    {page}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <DeliveryDiningIcon
+            sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
+          />
+          {/*  */}
           <Typography
-            variant="h5"
+            variant="h6"
             noWrap
             component="a"
-            href=""
+            href="/"
             sx={{
               mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
+              display: { xs: 'flex', md: 'none' },
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
+              textTransform: 'uppercase'
             }}
           >
-            LOGO
+            Gifty
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={(event) => {
+                  handleCloseNavMenu(event.target.textContent);
+                }}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
                 {page}
               </Button>
             ))}
           </Box>
-
           <Box sx={{ flexGrow: 0 }}>
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                <IconButton
-                  onClick={handleOpenUserMenu}
-                  size="large"
-                  color="inherit"
-                >
-                  <PersonRoundedIcon />
-                </IconButton>
+              <IconButton
+                onClick={handleOpenUserMenu}
+                size="large"
+                color="inherit"
+              >
+                <PersonRoundedIcon />
+              </IconButton>
               <Menu
                 sx={{ mt: "45px" }}
                 id="menu-appbar"
@@ -175,4 +194,4 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
-export default ResponsiveAppBar;
+export default NavBar;

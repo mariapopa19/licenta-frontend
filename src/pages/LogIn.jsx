@@ -11,7 +11,7 @@ import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import { login } from "../api";
 import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, NavLink, useNavigate } from "react-router-dom";
 import { GeneralProvider } from "../context/GeneralContext";
 
 function Copyright(props) {
@@ -163,9 +163,9 @@ export default function LogIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link to="/" relative="path">
+                <NavLink to="/signup" end>
                   {"Nu ai cont deja? Înregistrează-te"}
-                </Link>
+                </NavLink>
               </Grid>
             </Grid>
           </Box>
