@@ -67,7 +67,7 @@ function NavBar() {
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
-              textTransform: 'uppercase'
+              textTransform: "uppercase",
             }}
           >
             Gifty
@@ -119,7 +119,7 @@ function NavBar() {
             </Menu>
           </Box>
           <DeliveryDiningIcon
-            sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
+            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
           />
           {/*  */}
           <Typography
@@ -129,13 +129,13 @@ function NavBar() {
             href="/"
             sx={{
               mr: 2,
-              display: { xs: 'flex', md: 'none' },
+              display: { xs: "flex", md: "none" },
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
-              textTransform: 'uppercase'
+              textTransform: "uppercase",
             }}
           >
             Gifty
@@ -184,7 +184,12 @@ function NavBar() {
                   </MenuItem>
                 ))}
               </Menu>
-              <IconButton size="large" color="inherit" edge="end">
+              <IconButton
+                size="large"
+                color="inherit"
+                edge="end"
+                onClick={() => navigate("/cos-cumparaturi", {replace: true})}
+              >
                 <ShoppingCartIcon />
               </IconButton>
             </Box>

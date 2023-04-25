@@ -220,3 +220,12 @@ export const deleteCategorie = async (categorieId) => {
     throw Error(e.message);
   }
 };
+
+export const produseShop = async () => {
+  try {
+    const res = await axios.get(generateURL('shop/produse'))
+    return res.data;
+  } catch (e) {
+    throw Error(e.message);
+  }
+}

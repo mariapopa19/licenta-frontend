@@ -2,7 +2,6 @@
 import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-// import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LogIn from "./pages/LogIn";
@@ -13,6 +12,7 @@ import SignUp from "./pages/SignUp";
 import Loading from "./layout/Loading";
 import Admin from "./pages/Admin";
 import { ConfirmProvider } from "material-ui-confirm";
+import CosCumparaturi from "./pages/CosCumparaturi";
 
 const Home = lazy(() => import("./pages/Home"));
 const router = createBrowserRouter([
@@ -40,6 +40,10 @@ const router = createBrowserRouter([
     path: "admin",
     element: <Admin />,
   },
+  {
+    path:'cos-cumparaturi',
+    element: <CosCumparaturi />
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

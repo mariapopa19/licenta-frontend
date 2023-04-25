@@ -52,7 +52,7 @@ const AdminTableFirme = () => {
       if (!Object.keys(validationErrors).length) {
         data[row.index] = values;
         await modificaFirma(values.id, values.denumire, values.data_finalizare);
-        fetchFirme();
+        fetchFirme()
         exitEditingMode(); //required to exit editing mode and close modal
       }
     } catch (error) {

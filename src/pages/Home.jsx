@@ -1,15 +1,25 @@
 import { Box, createTheme, CssBaseline } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { lazy, Suspense, useContext } from "react";
+import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { ThemeProvider } from "styled-components";
 // import { Item } from "../components/Item";
 import { GeneralContext } from "../context/GeneralContext";
 import Loading from "../layout/Loading";
 import NavBar from "../layout/NavBar";
+import { produseShop } from "../api";
 
 const Item = lazy(() => import("../components/Item"));
 
 export default function Home() {
+  const [produse, setProduse] = useState([])
+  const fetchProduse = async () => {
+    const res = await produseShop()
+    console.log(res);
+    setProduse(res.produse)
+  }
+  useEffect(() => {
+    fetchProduse()
+  }, [])
   // localStorage.setItem('token', '')
   const { theme } = useContext(GeneralContext);
   const theme1 = createTheme({
@@ -30,9 +40,9 @@ export default function Home() {
             justifyContent="center"
             alignItems="center"
           >
-            {Array.from(Array(3)).map((_, index) => (
+            {produse.map((produs, index) => (
               <Grid2 item xs={2} sm={4} md={4} key={index}>
-                <Item />
+                <Item numeProdus={produs.denumire} pret={produs.pret} poza={produs.imageURL} />
               </Grid2>
             ))}
           </Grid2>

@@ -7,7 +7,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Tooltip,
@@ -15,7 +19,9 @@ import {
 import { Delete, Edit } from "@mui/icons-material";
 import {
   adaugaProdus,
+  categoriiAdmin,
   deleteProdus,
+  firmeAdmin,
   modificaProdus,
   produseAdmin,
 } from "../api";
@@ -26,8 +32,10 @@ const AdminTableProduse = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [isError, setIsError] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+  const [firme, setFirme] = useState([]);
+  const [categorii, setCategorii] = useState([]);
 
-  const confirm = useConfirm()
+  const confirm = useConfirm();
 
   const handleCreateNewRow = async (values) => {
     console.log(values);
@@ -86,7 +94,9 @@ const AdminTableProduse = () => {
   const handleDeleteRow = useCallback(
     async (row) => {
       try {
-        await confirm({ description: `This will permanently delete ${row.original.denumire}.` })
+        await confirm({
+          description: `This will permanently delete ${row.original.denumire}.`,
+        });
         const res = await deleteProdus(row.original.id);
         data.splice(row.index, 1);
         setData([...res]);
@@ -127,6 +137,13 @@ const AdminTableProduse = () => {
     [validationErrors]
   );
 
+  const dropDown = async () => {
+    const firme = await firmeAdmin();
+    setFirme(firme);
+    const categorii = await categoriiAdmin();
+    setCategorii(categorii);
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -139,6 +156,7 @@ const AdminTableProduse = () => {
       {
         header: "Denumire",
         accessorKey: "denumire",
+        multiline: false,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
         }),
@@ -146,6 +164,7 @@ const AdminTableProduse = () => {
       {
         header: "Pret",
         accessorKey: "pret",
+        multiline: false,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
           type: "number",
@@ -154,6 +173,7 @@ const AdminTableProduse = () => {
       {
         header: "Image URL",
         accessorKey: "imageURL",
+        multiline: false,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
           type: "url",
@@ -162,8 +182,11 @@ const AdminTableProduse = () => {
       {
         header: "Descriere",
         accessorKey: "descriere",
+        multiline: true,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
+          multiline: true,
+          maxRows: 4,
         }),
       },
       {
@@ -200,6 +223,7 @@ const AdminTableProduse = () => {
 
   useEffect(() => {
     fetchProduse();
+    dropDown();
   }, []);
 
   return (
@@ -257,17 +281,28 @@ const AdminTableProduse = () => {
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
+        categorii={categorii}
+        firme={firme}
       />
     </>
   );
 };
-export const CreateNewProductModal = ({ open, columns, onClose, onSubmit }) => {
+export const CreateNewProductModal = ({
+  open,
+  columns,
+  onClose,
+  onSubmit,
+  categorii,
+  firme,
+}) => {
   const [values, setValues] = useState(() =>
     columns.reduce((acc, column) => {
       acc[column.accessorKey ?? ""] = "";
       return acc;
     }, {})
   );
+  const [firmaState, setFirmaState] = useState("");
+  const [categorieState, setCategorieState] = useState("");
 
   const handleSubmit = () => {
     //put your validation logic here
@@ -282,22 +317,66 @@ export const CreateNewProductModal = ({ open, columns, onClose, onSubmit }) => {
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack
             sx={{
-              my : '0.5rem',
+              my: "0.5rem",
               width: "100%",
               minWidth: { xs: "300px", sm: "360px", md: "400px" },
               gap: "1.5rem",
             }}
           >
-            {columns.map((column) => (
-              <TextField
-                key={column.accessorKey}
-                label={column.header}
-                name={column.id}
-                onChange={(e) =>
-                  setValues({ ...values, [e.target.name]: e.target.value })
-                }
-              />
-            ))}
+            {columns.map((column) =>
+              column.id === "firma" ? (
+                <FormControl fullWidth>
+                  <InputLabel id="firma">Firma</InputLabel>
+                  <Select
+                    id="firma"
+                    label="Firma"
+                    name={column.id}
+                    value={firmaState}
+                    onChange={(e) => {
+                      setFirmaState(e.target.value);
+                      setValues({ ...values, [e.target.name]: e.target.value });
+                    }}
+                  >
+                    {firme.map((firma) => (
+                      <MenuItem value={firma.denumire}>
+                        {firma.denumire}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : column.id === "categorie" ? (
+                <FormControl fullWidth>
+                  <InputLabel id="categorie">Categorie</InputLabel>
+                  <Select
+                    id="categorie"
+                    label="Categorie"
+                    name={column.id}
+                    value={categorieState}
+                    onChange={(e) => {
+                      setCategorieState(e.target.value);
+                      setValues({ ...values, [e.target.name]: e.target.value });
+                    }}
+                  >
+                    {categorii.map((categorie) => (
+                      <MenuItem value={categorie.denumire}>
+                        {categorie.denumire}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : (
+                <TextField
+                  key={column.accessorKey}
+                  label={column.header}
+                  name={column.id}
+                  multiline={column.multiline}
+                  maxRows={4}
+                  onChange={(e) =>
+                    setValues({ ...values, [e.target.name]: e.target.value })
+                  }
+                />
+              )
+            )}
           </Stack>
         </form>
       </DialogContent>
