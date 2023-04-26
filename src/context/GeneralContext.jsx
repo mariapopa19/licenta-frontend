@@ -18,7 +18,8 @@ const GeneralProvider = (props) => {
   });
 
   const [token, setToken] = useState(null);
-
+  const [userId, setUserId] = useState(null);
+  const [produsAdaugatInCos, setProdusAdaugatInCos] = useState({});
   const navigate = useNavigate();
 
   const logOut = async () => {
@@ -28,7 +29,18 @@ const GeneralProvider = (props) => {
   };
 
   return (
-    <GeneralContext.Provider value={{ token, setToken, logOut, theme }}>
+    <GeneralContext.Provider
+      value={{
+        token,
+        setToken,
+        logOut,
+        theme,
+        userId,
+        setUserId,
+        produsAdaugatInCos,
+        setProdusAdaugatInCos,
+      }}
+    >
       {props.children}
     </GeneralContext.Provider>
   );

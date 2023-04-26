@@ -35,6 +35,17 @@ export const login = async (email, parola) => {
   }
 };
 
+export const schimbaParolaPas1 = async (email) => {
+  try {
+    const res = await axios.get(generateURL("auth/new-pass"), {
+      email: email,
+    });
+    return res.data;
+  } catch (e) {
+    throw Error(e.message);
+  }
+};
+
 export const produseAdmin = async () => {
   try {
     const res = await axios.get(generateURL("admin/produse"));
@@ -118,17 +129,17 @@ export const adaugaFirma = async (denumire, data_inceput, data_finalizare) => {
   }
 };
 
-export const modificaFirma = async(firmaId, denumire, data_finalizare) => {
-  try{  
+export const modificaFirma = async (firmaId, denumire, data_finalizare) => {
+  try {
     const res = await axios.patch(generateURL(`admin/firma/${firmaId}`), {
       denumire: denumire,
-      data_finalizare: data_finalizare
-    })
+      data_finalizare: data_finalizare,
+    });
     return res.data.result;
   } catch (e) {
     throw Error(e.message);
   }
-}
+};
 export const deleteFirma = async (firmaId) => {
   try {
     const res = await axios.delete(generateURL(`admin/firma/${firmaId}`));
@@ -223,9 +234,55 @@ export const deleteCategorie = async (categorieId) => {
 
 export const produseShop = async () => {
   try {
-    const res = await axios.get(generateURL('shop/produse'))
+    const res = await axios.get(generateURL("shop/produse"));
     return res.data;
   } catch (e) {
     throw Error(e.message);
   }
-}
+};
+
+export const cosCumparaturi = async (userId) => {
+  try {
+    const res = await axios.get(generateURL("shop/cos-cumparaturi"), {
+      userId: userId,
+    });
+    return res.data.produseCos;
+  } catch (e) {
+    throw Error(e.message);
+  }
+};
+
+export const adaugaInCos = async (userId, produsId) => {
+  try {
+    const res = await axios.post(generateURL("shop/cos-cumparaturi"), {
+      userId: userId,
+      prodId: produsId,
+    });
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.message);
+  }
+};
+
+export const scoateProdusCos = async (userId, produsId) => {
+  try {
+    const res = await axios.post(generateURL("shop/scoate-produs-cos"), {
+      userId: userId,
+      prodId: produsId,
+    });
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.message);
+  }
+};
+
+export const stergeProdusCos = async (userId, produsId) => {
+  try {
+    const res = await axios.delete(
+      generateURL(`shop/sterge-produs-cos-cumparaturi/${userId}/${produsId}`)
+    );
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.message);
+  }
+};

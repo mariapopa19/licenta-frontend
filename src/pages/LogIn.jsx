@@ -11,8 +11,8 @@ import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import { login } from "../api";
 import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
-import { Link, Navigate, NavLink, useNavigate } from "react-router-dom";
-import { GeneralProvider } from "../context/GeneralContext";
+import { Link,  NavLink, useNavigate } from "react-router-dom";
+import { GeneralContext } from "../context/GeneralContext";
 
 function Copyright(props) {
   return (
@@ -64,6 +64,7 @@ export default function LogIn() {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [typeError, setTypeError] = useState(false)
+  const {setToken, setUserId} = useContext(GeneralContext)
 
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
@@ -71,7 +72,8 @@ export default function LogIn() {
     try {
       const res = await login(email, pass);
       if (res.token) {
-        // setToken(res.token);
+        setToken(res.token);
+        setUserId(res.userId)
         localStorage.setItem('token',res.token);
         navigate("/");
       }
@@ -81,6 +83,8 @@ export default function LogIn() {
       setTypeError(true)
     }
   };
+
+  // TODO  -  de facut handle schimbare parola 
 
   useEffect(()=>{
     if(localStorage.getItem('token')) {

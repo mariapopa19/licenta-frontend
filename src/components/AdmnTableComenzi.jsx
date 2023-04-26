@@ -142,6 +142,7 @@ const AdminTableComenzi = () => {
         accessorKey: "intervalLivrare",
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
+          type: 'time'
         }),
       },
       {

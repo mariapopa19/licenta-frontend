@@ -6,20 +6,37 @@ import { ThemeProvider } from "styled-components";
 import { GeneralContext } from "../context/GeneralContext";
 import Loading from "../layout/Loading";
 import NavBar from "../layout/NavBar";
-import { produseShop } from "../api";
+import { adaugaInCos, produseShop } from "../api";
+import { useNavigate } from "react-router-dom";
 
 const Item = lazy(() => import("../components/Item"));
 
 export default function Home() {
-  const [produse, setProduse] = useState([])
+  const [produse, setProduse] = useState([]);
+  const { userId } = useContext(GeneralContext);
+  const [produseCosCumparaturi, setProduseCosCumparaturi] = useState([]);
+  const navigate = useNavigate();
+
+  const handleAdaugaCos = async (prodId) => {
+    if (userId) {
+      await adaugaInCos(userId, prodId);
+    } else {
+      navigate("/login", {replace: true});
+    }
+  };
+
   const fetchProduse = async () => {
-    const res = await produseShop()
-    console.log(res);
-    setProduse(res.produse)
-  }
+    try {
+      const res = await produseShop();
+      console.log(res);
+      setProduse(res.produse);
+    } catch (e) {
+      console.log(e);
+    }
+  };
   useEffect(() => {
-    fetchProduse()
-  }, [])
+    fetchProduse();
+  }, []);
   // localStorage.setItem('token', '')
   const { theme } = useContext(GeneralContext);
   const theme1 = createTheme({
@@ -42,7 +59,13 @@ export default function Home() {
           >
             {produse.map((produs, index) => (
               <Grid2 item xs={2} sm={4} md={4} key={index}>
-                <Item numeProdus={produs.denumire} pret={produs.pret} poza={produs.imageURL} />
+                <Item
+                  id={produs.id}
+                  numeProdus={produs.denumire}
+                  pret={produs.pret}
+                  poza={produs.imageURL}
+                  adaugareInCos={handleAdaugaCos}
+                />
               </Grid2>
             ))}
           </Grid2>

@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 
 
-export default function Item({ numeProdus, pret, poza }) {
+export default function Item({ id, numeProdus, pret, poza, adaugareInCos }) {
   return (
     <Card sx={{ margin: "auto", maxWidth: 300, flexGrow: 1 }}>
       <CardMedia
@@ -22,7 +22,7 @@ export default function Item({ numeProdus, pret, poza }) {
         <Typography align="center">{`${pret} lei`}</Typography>
       </CardContent>
       <CardActions sx={{justifyContent: 'center'}}>
-        <Button>
+        <Button onClick={() => adaugareInCos(id)}>
           Adaugă în coș
         </Button>
       </CardActions>

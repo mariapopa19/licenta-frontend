@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography, styled } from "@mui/material";
+import { ButtonBase, Grid, Paper, Typography, styled } from "@mui/material";
 
 const Img = styled("img")({
   margin: "auto",
@@ -7,13 +7,16 @@ const Img = styled("img")({
   maxHeight: "100%",
 });
 
-const ItemCart = ({ poza, nume, pret, cantitate }) => {
+const ItemCart = ({ id, poza, nume, pret, cantitate, handleRemove }) => {
   return (
-    <Paper elevation={0} sx={{ p: 2, margin: "auto", maxWidth: 500, flexGrow: 1 }}>
-      <Grid container spacing={2}>
+    <Paper
+      elevation={0}
+      sx={{ p: 2, margin: "auto", maxWidth: 500, flexGrow: 1 }}
+    >
+      <Grid container spacing={2} >
         <Grid item>
           <Img
-          sx={{ width: 128, height: 128 }}
+            sx={{ width: 128, height: 128 }}
             alt="produs"
             src="https://florariatrias.b-cdn.net/wp-content/uploads/2022/01/20220121_143950.jpg"
           />
@@ -29,9 +32,11 @@ const ItemCart = ({ poza, nume, pret, cantitate }) => {
               </Typography>
             </Grid>
             <Grid item>
-              <Typography sx={{ cursor: 'pointer' }} variant="body2">
-                Remove
-              </Typography>
+              <ButtonBase sx={{py:1.5, px:.5}} onClick={() => handleRemove(id)}>
+                <Typography  variant="body2">
+                  Remove
+                </Typography>
+              </ButtonBase>
             </Grid>
           </Grid>
           <Grid item>
