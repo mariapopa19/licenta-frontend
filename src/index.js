@@ -1,58 +1,22 @@
 /* eslint-disable react/jsx-pascal-case */
-import React, { lazy, Suspense } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import LogIn from "./pages/LogIn";
+import { BrowserRouter } from "react-router-dom";
 import { StyledEngineProvider } from "@mui/material";
-import ErrorPage from "./pages/Error";
-import { GeneralProvider } from "./context/GeneralContext";
-import SignUp from "./pages/SignUp";
-import Loading from "./layout/Loading";
-import Admin from "./pages/Admin";
 import { ConfirmProvider } from "material-ui-confirm";
-import CosCumparaturi from "./pages/CosCumparaturi";
+import App from "./App";
+import { GeneralProvider } from "./context/GeneralContext";
 
-const Home = lazy(() => import("./pages/Home"));
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <Suspense fallback={<Loading />}>
-        {" "}
-        <Home />{" "}
-      </Suspense>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "login",
-    element: <LogIn />,
-    // errorElement: <ErrorPage />,
-  },
-  {
-    path: "signup",
-    element: <SignUp />,
-    // errorElement: <ErrorPage />,
-  },
-  {
-    path: "admin",
-    element: <Admin />,
-  },
-  {
-    path:'cos-cumparaturi',
-    element: <CosCumparaturi />
-  }
-]);
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <StyledEngineProvider injectFirst>
     <ConfirmProvider>
-      <RouterProvider router={router}>
-        <GeneralProvider />
-      </RouterProvider>
+      <BrowserRouter><GeneralProvider><App /></GeneralProvider></BrowserRouter>
+      {/* <RouterProvider router={router}></RouterProvider> */}
     </ConfirmProvider>
   </StyledEngineProvider>
 );

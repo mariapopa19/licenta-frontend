@@ -1,30 +1,34 @@
 // import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
 // import Navbar from './layout/NavBar';
-import SignUp from './pages/SignUp'
+import SignUp from "./pages/SignUp";
+import { Suspense, lazy } from "react";
+import Loading from "./layout/Loading";
+import LogIn from "./pages/LogIn";
+import Admin from "./pages/Admin";
+import CosCumparaturi from "./pages/CosCumparaturi";
+import ErrorPage from "./pages/Error";
+const Home = lazy(() => import("./pages/Home"));
 
 function App() {
   return (
-    // <Navbar>
-
-      <SignUp />
-    // </Navbar> 
-    // <div className="App">
-    //   <header className="App-header">
-    //     <img src={logo} className="App-logo" alt="logo" />
-    //     <p>
-    //       Edit <code>src/App.js</code> and save to reload.
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //     >
-    //       Learn React
-    //     </a>
-    //   </header>
-    // </div>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <Suspense fallback={<Loading />}>
+            {" "}
+            <Home />{" "}
+          </Suspense>
+        }
+        errorElement={<ErrorPage />}
+      />
+      <Route path="/login" element={<LogIn />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/cos-cumparaturi" element={<CosCumparaturi />} />
+    </Routes>
   );
 }
 

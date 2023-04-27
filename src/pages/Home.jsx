@@ -14,9 +14,10 @@ const Item = lazy(() => import("../components/Item"));
 export default function Home() {
   const [produse, setProduse] = useState([]);
   const { userId } = useContext(GeneralContext);
-  const [produseCosCumparaturi, setProduseCosCumparaturi] = useState([]);
+  // const [produseCosCumparaturi, setProduseCosCumparaturi] = useState([]);
   const navigate = useNavigate();
 
+  console.log(useContext(GeneralContext));
   const handleAdaugaCos = async (prodId) => {
     if (userId) {
       await adaugaInCos(userId, prodId);

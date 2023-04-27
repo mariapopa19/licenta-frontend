@@ -11,7 +11,7 @@ import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import { login } from "../api";
 import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
-import { Link,  NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { GeneralContext } from "../context/GeneralContext";
 
 function Copyright(props) {
@@ -63,8 +63,9 @@ export default function LogIn() {
 
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
-  const [typeError, setTypeError] = useState(false)
-  const {setToken, setUserId} = useContext(GeneralContext)
+  const [typeErrorParola, setTypeErrorParola] = useState(false);
+  const [typeErrorEmail, setTypeErrorEmail] = useState(false);
+  const { token, userId, setToken, setUserId } = useContext(GeneralContext);
 
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
@@ -72,25 +73,32 @@ export default function LogIn() {
     try {
       const res = await login(email, pass);
       if (res.token) {
+        console.log(res);
         setToken(res.token);
-        setUserId(res.userId)
-        localStorage.setItem('token',res.token);
-        navigate("/");
+        setUserId(res.userId);
+        if (userId !== '' && token !== '') {
+          localStorage.setItem("token", res.token);
+          localStorage.setItem("userId", res.userId)
+          navigate("/");
+        }
       }
-      console.log(res);
     } catch (e) {
       console.log(e);
-      setTypeError(true)
+      if (e === "Parola gresita!") {
+        setTypeErrorParola(true);
+      } else if (e === "Nu exista utilizator cu acest email.") {
+        setTypeErrorEmail(true);
+      }
     }
   };
 
-  // TODO  -  de facut handle schimbare parola 
+  // TODO  -  de facut handle schimbare parola
 
-  useEffect(()=>{
-    if(localStorage.getItem('token')) {
-      navigate('/');
+  useEffect(() => {
+    if (token !== '') {
+      navigate("/");
     }
-  }, [ navigate]);
+  }, [navigate]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -122,8 +130,8 @@ export default function LogIn() {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
-              error={typeError}
-              helperText={typeError ? 'Email-ul nu este corect' : ''}
+              error={typeErrorEmail}
+              helperText={typeErrorEmail ? "Email-ul nu este corect" : ""}
               margin="normal"
               required
               fullWidth
@@ -137,8 +145,8 @@ export default function LogIn() {
               onChange={(e) => {
                 setPass(e.target.value);
               }}
-              error={typeError}
-              helperText={typeError ? 'Parola nu este corecta': ''}
+              error={typeErrorParola}
+              helperText={typeErrorParola ? "Parola nu este corecta" : ""}
               margin="normal"
               required
               fullWidth

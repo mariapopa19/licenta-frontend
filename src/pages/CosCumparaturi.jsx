@@ -34,20 +34,26 @@ const EmptyCart = styled("div")({
 const CosCumparaturi = () => {
   const [produseCosCumparaturi, setProduseCosCumparaturi] = useState([]);
   const [total, setTotal] = useState(0);
-  const { userId } = useContext(GeneralContext);
+  // const { userId } = useContext(GeneralContext);
   const navigate = useNavigate();
-
+  const userId = localStorage.getItem("userId");
   const fetchProduseCosCumparaturi = async () => {
-    if (userId) {
-      const res = await cosCumparaturi(userId);
-      const totalInitial = res.reduce((acc, curr) => acc + curr.pret, 0);
-      setProduseCosCumparaturi(res);
-      setTotal(totalInitial);
+    if (userId !== "") {
+      try {
+        console.log(userId);
+        const res = await cosCumparaturi(userId);
+        const totalInitial = res.reduce((acc, curr) => acc + curr.pret, 0);
+        setProduseCosCumparaturi(res);
+        setTotal(totalInitial);
+      } catch (e) {
+        console.log(e);
+      }
     } else {
-      navigate("/login", {replace: true});
-      // ! eroare aici, de rezolvat 
+      navigate("/login", { replace: true });
+      // ! eroare aici, de rezolvat
     }
   };
+  console.log(produseCosCumparaturi);
 
   const handleStergeProdusCos = async (prodId) => {
     try {

@@ -17,14 +17,15 @@ const GeneralProvider = (props) => {
     },
   });
 
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("");
   const [produsAdaugatInCos, setProdusAdaugatInCos] = useState({});
   const navigate = useNavigate();
 
   const logOut = async () => {
     localStorage.clear();
-    setToken(null);
+    setToken("");
+    setUserId("");
     navigate("/");
   };
 
