@@ -13,6 +13,9 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import { useNavigate } from "react-router-dom";
 import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
+import { Badge } from "@mui/material";
+import { GeneralContext } from "../context/GeneralContext";
+import { cosCumparaturi } from "../api";
 // import { GeneralContext } from "../context/GeneralContext";
 
 const pages = ["home", "admin"];
@@ -23,7 +26,10 @@ function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   // const [currentPage, setCurrentPgae] = React.useState('')
-  const navigate = useNavigate();
+  const { produsAdaugatInCos, setProdusAdaugatInCos } =
+    React.useContext(GeneralContext);
+  const userId = localStorage.getItem("userId");
+  const navigate = useNavigate()
 
   const handleOpenNavMenu = (event) => {
     console.log(event.currentTarget);
@@ -33,7 +39,7 @@ function NavBar() {
     if (localStorage.getItem("token") !== "") {
       setAnchorElUser(event.currentTarget);
     } else {
-      navigate("login");
+      return navigate("login");
     }
   };
 
@@ -46,6 +52,17 @@ function NavBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const bagdeCosCumparaturi = async () => {
+    const res = await cosCumparaturi(userId);
+    setProdusAdaugatInCos(
+      res.reduce((acc, curr) => acc + curr.produsCosCumparaturi.cantitate, 0)
+    );
+  };
+  React.useEffect(() => {
+    bagdeCosCumparaturi();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AppBar position="static">
@@ -188,9 +205,11 @@ function NavBar() {
                 size="large"
                 color="inherit"
                 edge="end"
-                onClick={() => navigate("/cos-cumparaturi", {replace: true})}
+                onClick={() => navigate('cos-cumparaturi')}
               >
-                <ShoppingCartIcon />
+                <Badge badgeContent={produsAdaugatInCos} color="error">
+                  <ShoppingCartIcon />
+                </Badge>
               </IconButton>
             </Box>
           </Box>

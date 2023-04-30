@@ -1,13 +1,19 @@
 import NavBar from "../layout/NavBar";
 // import ItemCart from "../components/ItemCart";
 import { useContext, useEffect, useState } from "react";
-import { cosCumparaturi, stergeProdusCos } from "../api";
+import {
+  adaugaInCos,
+  cosCumparaturi,
+  scoateProdusCos,
+  stergeProdusCos,
+} from "../api";
 
 import { Grid, Typography, Divider, Button, styled } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { GeneralContext } from "../context/GeneralContext";
+// import { GeneralContext } from "../context/GeneralContext";
 import ItemCart from "../components/ItemCart";
 import { useNavigate } from "react-router-dom";
+import { GeneralContext } from "../context/GeneralContext";
 
 const Root = styled("div")({
   flexGrow: 1,
@@ -34,7 +40,8 @@ const EmptyCart = styled("div")({
 const CosCumparaturi = () => {
   const [produseCosCumparaturi, setProduseCosCumparaturi] = useState([]);
   const [total, setTotal] = useState(0);
-  // const { userId } = useContext(GeneralContext);
+  const { produsAdaugatInCos, setProdusAdaugatInCos } =
+    useContext(GeneralContext);
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const fetchProduseCosCumparaturi = async () => {
@@ -42,9 +49,12 @@ const CosCumparaturi = () => {
       try {
         console.log(userId);
         const res = await cosCumparaturi(userId);
-        const totalInitial = res.reduce((acc, curr) => acc + curr.pret, 0);
+        const totalInitial = res.reduce(
+          (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
+          0
+        );
         setProduseCosCumparaturi(res);
-        setTotal(totalInitial);
+        setTotal(totalInitial.toFixed(2));
       } catch (e) {
         console.log(e);
       }
@@ -55,13 +65,43 @@ const CosCumparaturi = () => {
   };
   console.log(produseCosCumparaturi);
 
-  const handleStergeProdusCos = async (prodId) => {
+  const handleStergeProdusCos = async (prodId, index) => {
     try {
       const res = await stergeProdusCos(userId, prodId);
-      setProduseCosCumparaturi(res);
+      const totalNou = res.reduce(
+        (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
+        0
+      );
+      produseCosCumparaturi.splice(index, 1);
+      setProdusAdaugatInCos(produsAdaugatInCos - 1);
+      setProduseCosCumparaturi([...res]);
+      setTotal(totalNou.toFixed(2));
     } catch (e) {
       console.log(e);
     }
+  };
+  const handleIncrement = async (produsId) => {
+    await adaugaInCos(userId, produsId);
+    const res = await cosCumparaturi(userId);
+    const totalNou = res.reduce(
+      (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
+      0
+    );
+    setProdusAdaugatInCos(produsAdaugatInCos + 1);
+    setProduseCosCumparaturi([...res]);
+    setTotal(totalNou.toFixed(2));
+  };
+
+  const handleDecrement = async (produsId) => {
+    await scoateProdusCos(userId, produsId);
+    const res = await cosCumparaturi(userId);
+    const totalNou = res.reduce(
+      (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
+      0
+    );
+    setProdusAdaugatInCos(produsAdaugatInCos - 1);
+    setProduseCosCumparaturi([...res]);
+    setTotal(totalNou.toFixed(2));
   };
 
   useEffect(() => {
@@ -73,7 +113,7 @@ const CosCumparaturi = () => {
       <Grid item md={12} sm={12} xs={12}>
         <NavBar />
       </Grid>
-      <Grid item md={10} sm={10} xs={12} sx={{ mt: 10 }}>
+      <Grid item md={10} sm={10} xs={12} sx={{ mt: 10, mx: 10 }}>
         <Root>
           <Grid container spacing={3}>
             <Grid item xs={12} md={8}>
@@ -83,15 +123,18 @@ const CosCumparaturi = () => {
                     Coș de cumpărături
                   </Title>
                   <Divider />
-                  {produseCosCumparaturi.map((produs) => (
+                  {produseCosCumparaturi.map((produs, index) => (
                     <div key={produs.id}>
                       <ItemCart
+                        index={index}
                         id={produs.id}
                         poza={produs.imageURL}
                         nume={produs.denumire}
                         pret={produs.pret}
                         cantitate={produs.produsCosCumparaturi.cantitate}
                         handleRemove={handleStergeProdusCos}
+                        handleIncrement={handleIncrement}
+                        handleDecrement={handleDecrement}
                       />
                       <Divider />
                     </div>

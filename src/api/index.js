@@ -241,10 +241,19 @@ export const produseShop = async () => {
   }
 };
 
+export const produsShop = async (produsId) => {
+  try {
+    const res = await axios.get(generateURL(`shop/produse/${produsId}`));
+    return res.data.produs;
+  } catch (e) {
+    throw Error(e.message);
+  }
+};
+
 export const cosCumparaturi = async (userId) => {
   try {
-      console.log(userId);
-      const res = await axios.get(generateURL(`shop/cos-cumparaturi/${userId}`));
+    console.log(userId);
+    const res = await axios.get(generateURL(`shop/cos-cumparaturi/${userId}`));
     return res.data.produseCos;
   } catch (e) {
     throw Error(e.message);

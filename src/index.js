@@ -3,19 +3,15 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter } from "react-router-dom";
 import { StyledEngineProvider } from "@mui/material";
 import { ConfirmProvider } from "material-ui-confirm";
 import App from "./App";
-import { GeneralProvider } from "./context/GeneralContext";
-
-
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <StyledEngineProvider injectFirst>
     <ConfirmProvider>
-      <BrowserRouter><GeneralProvider><App /></GeneralProvider></BrowserRouter>
+        <App />
       {/* <RouterProvider router={router}></RouterProvider> */}
     </ConfirmProvider>
   </StyledEngineProvider>

@@ -10,7 +10,7 @@ import { creareUtilizator } from "../api/index";
 import { createTheme, styled, ThemeProvider } from "@mui/material";
 import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
-import { Link, Navigate, NavLink } from "react-router-dom";
+import { Link,  NavLink } from "react-router-dom";
 
 function Copyright(props) {
   return (

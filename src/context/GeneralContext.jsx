@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material";
 import { createContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const GeneralContext = createContext({});
 
@@ -19,7 +19,7 @@ const GeneralProvider = (props) => {
 
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
-  const [produsAdaugatInCos, setProdusAdaugatInCos] = useState({});
+  const [produsAdaugatInCos, setProdusAdaugatInCos] = useState(0);
   const navigate = useNavigate();
 
   const logOut = async () => {
@@ -43,6 +43,7 @@ const GeneralProvider = (props) => {
       }}
     >
       {props.children}
+      <Outlet />
     </GeneralContext.Provider>
   );
 };

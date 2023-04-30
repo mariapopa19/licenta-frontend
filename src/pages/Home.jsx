@@ -1,4 +1,4 @@
-import { Box, createTheme, CssBaseline } from "@mui/material";
+import { Box, CssBaseline } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { ThemeProvider } from "styled-components";
@@ -7,22 +7,33 @@ import { GeneralContext } from "../context/GeneralContext";
 import Loading from "../layout/Loading";
 import NavBar from "../layout/NavBar";
 import { adaugaInCos, produseShop } from "../api";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
 const Item = lazy(() => import("../components/Item"));
 
 export default function Home() {
+  // const produse = useLoaderData()
   const [produse, setProduse] = useState([]);
-  const { userId } = useContext(GeneralContext);
-  // const [produseCosCumparaturi, setProduseCosCumparaturi] = useState([]);
-  const navigate = useNavigate();
-
-  console.log(useContext(GeneralContext));
+  const { produsAdaugatInCos, setProdusAdaugatInCos } =
+    useContext(GeneralContext);
+  const userId = localStorage.getItem("userId");
+  const navigate = useNavigate()
+ 
   const handleAdaugaCos = async (prodId) => {
     if (userId) {
       await adaugaInCos(userId, prodId);
+      setProdusAdaugatInCos(produsAdaugatInCos + 1);
+      navigate("/cos-cumparaturi");
     } else {
-      navigate("/login", {replace: true});
+      navigate("/login");
+    }
+  };
+
+  const handleDetaliiProdus = async (produsId) => {
+    try {
+      navigate(`/produs/${produsId}`);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -33,6 +44,10 @@ export default function Home() {
       setProduse(res.produse);
     } catch (e) {
       console.log(e);
+      throw new Response("", {
+        status: 404,
+        statusText: "Not found",
+      });
     }
   };
   useEffect(() => {
@@ -40,11 +55,11 @@ export default function Home() {
   }, []);
   // localStorage.setItem('token', '')
   const { theme } = useContext(GeneralContext);
-  const theme1 = createTheme({
-    palette: { mode: theme },
-  });
+  // const theme1 = createTheme({
+  //   palette: { mode: theme },
+  // });
   return (
-    <ThemeProvider theme={theme1}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <NavBar />
       <Suspense fallback={<Loading />}>
@@ -66,6 +81,7 @@ export default function Home() {
                   pret={produs.pret}
                   poza={produs.imageURL}
                   adaugareInCos={handleAdaugaCos}
+                  vizualizareProdus={handleDetaliiProdus}
                 />
               </Grid2>
             ))}
@@ -74,4 +90,19 @@ export default function Home() {
       </Suspense>
     </ThemeProvider>
   );
+}
+
+
+export const loaderProduse = async () => {
+  try {
+    const res = await produseShop();
+    console.log(res);
+    return res
+  } catch (e) {
+    console.log(e);
+    throw new Response("", {
+      status: 404,
+      statusText: e,
+    });
+  }
 }

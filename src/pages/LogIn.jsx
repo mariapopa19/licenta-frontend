@@ -66,8 +66,9 @@ export default function LogIn() {
   const [typeErrorParola, setTypeErrorParola] = useState(false);
   const [typeErrorEmail, setTypeErrorEmail] = useState(false);
   const { token, userId, setToken, setUserId } = useContext(GeneralContext);
+  const navigate = useNavigate()
 
-  const navigate = useNavigate();
+ 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -98,7 +99,7 @@ export default function LogIn() {
     if (token !== '') {
       navigate("/");
     }
-  }, [navigate]);
+  }, [token, navigate]);
 
   return (
     <ThemeProvider theme={theme}>

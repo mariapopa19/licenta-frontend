@@ -1,5 +1,10 @@
 // import logo from './logo.svg';
-import { Route, Routes } from "react-router-dom";
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom";
 import "./App.css";
 // import Navbar from './layout/NavBar';
 import SignUp from "./pages/SignUp";
@@ -9,13 +14,17 @@ import LogIn from "./pages/LogIn";
 import Admin from "./pages/Admin";
 import CosCumparaturi from "./pages/CosCumparaturi";
 import ErrorPage from "./pages/Error";
+import DetaliiProdus, { loaderDetaliiProdus } from "./pages/DetaliiProdus";
+import { GeneralProvider } from "./context/GeneralContext";
+import { loaderProduse } from "./pages/Home";
 const Home = lazy(() => import("./pages/Home"));
 
-function App() {
-  return (
-    <Routes>
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route element={<GeneralProvider />}>
       <Route
         path="/"
+        loader={loaderProduse}
         element={
           <Suspense fallback={<Loading />}>
             {" "}
@@ -28,8 +37,18 @@ function App() {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/cos-cumparaturi" element={<CosCumparaturi />} />
-    </Routes>
-  );
+      <Route
+        path="/produs/:produsId"
+        loader={loaderDetaliiProdus}
+        element={<DetaliiProdus />}
+        errorElement={<ErrorPage />}
+      />
+    </Route>
+  )
+);
+
+function App() {
+  return <RouterProvider router={router} />;
 }
 
 export default App;
