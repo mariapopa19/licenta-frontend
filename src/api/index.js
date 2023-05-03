@@ -294,3 +294,12 @@ export const stergeProdusCos = async (userId, produsId) => {
     throw Error(e.message);
   }
 };
+
+export const comenziShop = async (userId) => {
+  try {
+    const res = await axios.get(generateURL(`shop/comenzi/${userId}`));
+    return res.data.comenzi;
+  } catch (e) {
+    throw Error(e.message);
+  }
+};

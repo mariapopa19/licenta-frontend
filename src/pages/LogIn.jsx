@@ -77,11 +77,11 @@ export default function LogIn() {
         console.log(res);
         setToken(res.token);
         setUserId(res.userId);
-        if (userId !== '' && token !== '') {
+        // if (userId && token) {
           localStorage.setItem("token", res.token);
           localStorage.setItem("userId", res.userId)
           navigate("/");
-        }
+        // }
       }
     } catch (e) {
       console.log(e);

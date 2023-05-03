@@ -19,17 +19,17 @@ import { cosCumparaturi } from "../api";
 // import { GeneralContext } from "../context/GeneralContext";
 
 const pages = ["home", "admin"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = ["Contul meu", "Deconectare"];
 
-function NavBar() {
+function NavBar(props) {
   // const { token } = React.useContext(GeneralContext);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   // const [currentPage, setCurrentPgae] = React.useState('')
-  const { produsAdaugatInCos, setProdusAdaugatInCos } =
+  const { produsAdaugatInCos, setProdusAdaugatInCos, logOut } =
     React.useContext(GeneralContext);
   const userId = localStorage.getItem("userId");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     console.log(event.currentTarget);
@@ -65,7 +65,7 @@ function NavBar() {
   }, []);
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" {...props}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <DeliveryDiningIcon
@@ -196,7 +196,15 @@ function NavBar() {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={setting}
+                    onClick={() => {
+                      setting === "Contul meu"
+                      ? navigate("contul-meu")
+                      : logOut();
+                      handleCloseUserMenu();
+                    }}
+                  >
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}
@@ -205,7 +213,7 @@ function NavBar() {
                 size="large"
                 color="inherit"
                 edge="end"
-                onClick={() => navigate('cos-cumparaturi')}
+                onClick={() => navigate("cos-cumparaturi")}
               >
                 <Badge badgeContent={produsAdaugatInCos} color="error">
                   <ShoppingCartIcon />
