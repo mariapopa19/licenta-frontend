@@ -7,10 +7,17 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
 import { creareUtilizator } from "../api/index";
-import { createTheme, styled, ThemeProvider } from "@mui/material";
+import {
+  createTheme,
+  IconButton,
+  InputAdornment,
+  styled,
+  ThemeProvider,
+} from "@mui/material";
 import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
-import { Link,  NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 function Copyright(props) {
   return (
@@ -58,6 +65,9 @@ const Titlu = styled(Typography)`
 `;
 
 export default function SignUp() {
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = () => setShowPassword(!showPassword);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -148,7 +158,21 @@ export default function SignUp() {
                   fullWidth
                   name="password"
                   label="Parolă"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
+                  InputProps={{
+                    // <-- This is where the toggle button is added.
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                   id="password"
                   autoComplete="new-password"
                 />

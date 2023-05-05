@@ -303,3 +303,24 @@ export const comenziShop = async (userId) => {
     throw Error(e.message);
   }
 };
+
+export const detaliiUtilizator = async (token) => {
+  try {
+    const res = await axios.get(generateURL(`auth/user/${token}`));
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.message);
+  }
+};
+
+export const modificaDetaliiUtilizaor = async (token, nume, email) => {
+  try {
+    const res = await axios.patch(generateURL(`auth/user/${token}`), {
+      nume: nume,
+      email: email,
+    });
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.message);
+  }
+};

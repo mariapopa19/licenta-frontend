@@ -13,6 +13,8 @@ import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { GeneralContext } from "../context/GeneralContext";
+import { IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 function Copyright(props) {
   return (
@@ -60,15 +62,16 @@ const Titlu = styled(Typography)`
 `;
 export default function LogIn() {
   // const { token, setToken } = useContext(GeneralProvider);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = () => setShowPassword(!showPassword);
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [typeErrorParola, setTypeErrorParola] = useState(false);
   const [typeErrorEmail, setTypeErrorEmail] = useState(false);
-  const { token, userId, setToken, setUserId } = useContext(GeneralContext);
-  const navigate = useNavigate()
+  const { token, setToken, setUserId } = useContext(GeneralContext);
+  const navigate = useNavigate();
 
- 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -78,9 +81,9 @@ export default function LogIn() {
         setToken(res.token);
         setUserId(res.userId);
         // if (userId && token) {
-          localStorage.setItem("token", res.token);
-          localStorage.setItem("userId", res.userId)
-          navigate("/");
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("userId", res.userId);
+        navigate("/");
         // }
       }
     } catch (e) {
@@ -96,7 +99,7 @@ export default function LogIn() {
   // TODO  -  de facut handle schimbare parola
 
   useEffect(() => {
-    if (token !== '') {
+    if (token !== "") {
       navigate("/");
     }
   }, [token, navigate]);
@@ -153,7 +156,21 @@ export default function LogIn() {
               fullWidth
               name="password"
               label="Parolă"
-              type="password"
+              type={showPassword ? "text" : "password"}
+              InputProps={{
+                // <-- This is where the toggle button is added.
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               id="password"
               autoComplete="current-password"
             />

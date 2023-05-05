@@ -19,15 +19,22 @@ import {
   ShoppingBasketOutlined,
 } from "@mui/icons-material";
 import NavBar from "../layout/NavBar";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { comenziShop } from "../api";
+import {
+  comenziShop,
+  detaliiUtilizator,
+  modificaDetaliiUtilizaor,
+} from "../api";
 import ComenzileMele from "../components/ContulMeuPage/ComenzileMele";
+import DetaliiContulMeu from "../components/ContulMeuPage/DetaliiContulMeu";
+import { GeneralContext } from "../context/GeneralContext";
+import SchimbaParola from "../components/ContulMeuPage/SchimbaParola";
 
 const drawerWidth = 240;
 
 const ContulMeu = () => {
-  const [selectedMenuItem, setSelectedMenuItem] = useState("Comenzile Mele");
+  const [selectedMenuItem, setSelectedMenuItem] = useState("Contul Meu");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleMenuItemClick = (menuText) => {
@@ -35,8 +42,11 @@ const ContulMeu = () => {
     setIsMenuOpen(false);
   };
   const [comenzi, setComenzi] = useState([]);
+  const [detaliiUtilizatorRes, setDetaliiUtiizatorRes] = useState({});
+  const { logOut } = useContext(GeneralContext);
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
 
   const menuItems = [
     {
@@ -89,7 +99,27 @@ const ContulMeu = () => {
     </Box>
   );
 
-  const fetchUtilizator = async () => {
+  const fetchDetaliiUtilizator = async () => {
+    if (token) {
+      const res = await detaliiUtilizator(token);
+      setDetaliiUtiizatorRes(res);
+      console.log(detaliiUtilizatorRes);
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const clickSalveazaDetaliiUtilizator = async (nume, email) => {
+    if (token) {
+      const res = await modificaDetaliiUtilizaor(token, nume, email);
+      console.log(res);
+      setDetaliiUtiizatorRes(res);
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const fetchComenziUtilizator = async () => {
     if (userId) {
       console.log(userId);
       const res = await comenziShop(userId);
@@ -100,7 +130,8 @@ const ContulMeu = () => {
   };
 
   useEffect(() => {
-    fetchUtilizator();
+    fetchDetaliiUtilizator();
+    fetchComenziUtilizator();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
@@ -161,6 +192,16 @@ const ContulMeu = () => {
               {/* Aici se va adauga componenta corespunzatoare selectiei din meniu */}
               {selectedMenuItem === "Comenzile Mele" ? (
                 <ComenzileMele comenzi={comenzi} />
+              ) : selectedMenuItem === "Contul Meu" ? (
+                <DetaliiContulMeu
+                  numeUtilizator={detaliiUtilizatorRes.nume}
+                  emailUtilizator={detaliiUtilizatorRes.email}
+                  onClickSalveaza={clickSalveazaDetaliiUtilizator}
+                />
+              ) : selectedMenuItem === "Schimba Parola" ? (
+                <SchimbaParola />
+              ) : selectedMenuItem === "Deconectare" ? (
+                logOut()
               ) : null}
             </Box>
           </Box>
