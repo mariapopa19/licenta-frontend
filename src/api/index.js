@@ -250,20 +250,20 @@ export const produsShop = async (produsId) => {
   }
 };
 
-export const cosCumparaturi = async (userId) => {
+export const cosCumparaturi = async (token) => {
   try {
-    console.log(userId);
-    const res = await axios.get(generateURL(`shop/cos-cumparaturi/${userId}`));
+    console.log(token);
+    const res = await axios.get(generateURL(`shop/cos-cumparaturi/${token}`));
     return res.data.produseCos;
   } catch (e) {
     throw Error(e.message);
   }
 };
 
-export const adaugaInCos = async (userId, produsId) => {
+export const adaugaInCos = async (token, produsId) => {
   try {
     const res = await axios.post(generateURL("shop/cos-cumparaturi"), {
-      userId: userId,
+      token: token,
       prodId: produsId,
     });
     return res.data.result;
@@ -272,10 +272,10 @@ export const adaugaInCos = async (userId, produsId) => {
   }
 };
 
-export const scoateProdusCos = async (userId, produsId) => {
+export const scoateProdusCos = async (token, produsId) => {
   try {
     const res = await axios.post(generateURL("shop/scoate-produs-cos"), {
-      userId: userId,
+      token: token,
       prodId: produsId,
     });
     return res.data.result;
@@ -284,10 +284,10 @@ export const scoateProdusCos = async (userId, produsId) => {
   }
 };
 
-export const stergeProdusCos = async (userId, produsId) => {
+export const stergeProdusCos = async (token, produsId) => {
   try {
     const res = await axios.delete(
-      generateURL(`shop/sterge-produs-cos-cumparaturi/${userId}/${produsId}`)
+      generateURL(`shop/sterge-produs-cos-cumparaturi/${token}/${produsId}`)
     );
     return res.data.result;
   } catch (e) {
@@ -295,14 +295,23 @@ export const stergeProdusCos = async (userId, produsId) => {
   }
 };
 
-export const comenziShop = async (userId) => {
+export const comenziShop = async (token) => {
   try {
-    const res = await axios.get(generateURL(`shop/comenzi/${userId}`));
+    const res = await axios.get(generateURL(`shop/comenzi/${token}`));
     return res.data.comenzi;
   } catch (e) {
     throw Error(e.message);
   }
 };
+
+export const comandaShop = async (token, comandaId) => {
+  try {
+    const res = await axios.get(generateURL(`shop/comenzi/${token}/${comandaId}`));
+    return res.data.comanda;
+  } catch (e) {
+    throw Error(e.message);
+  }
+}
 
 export const detaliiUtilizator = async (token) => {
   try {

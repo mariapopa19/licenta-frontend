@@ -18,6 +18,7 @@ import DetaliiProdus, { loaderDetaliiProdus } from "./pages/DetaliiProdus";
 import { GeneralProvider } from "./context/GeneralContext";
 import { loaderProduse } from "./pages/Home";
 import ContulMeu from "./pages/ContulMeu";
+import DetaliiComanda from "./components/ContulMeuPage/DetaliiComanda";
 const Home = lazy(() => import("./pages/Home"));
 
 const router = createBrowserRouter(
@@ -45,6 +46,8 @@ const router = createBrowserRouter(
         errorElement={<ErrorPage />}
       />
       <Route path="contul-meu" element={<ContulMeu />} />
+        <Route path="contul-meu/comanda/:comandaId" element={<DetaliiComanda />} />
+      {/* </Route> */}
     </Route>
   )
 );

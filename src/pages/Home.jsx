@@ -7,7 +7,7 @@ import { GeneralContext } from "../context/GeneralContext";
 import Loading from "../layout/Loading";
 import NavBar from "../layout/NavBar";
 import { adaugaInCos, produseShop } from "../api";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Item = lazy(() => import("../components/Item"));
 
@@ -16,12 +16,18 @@ export default function Home() {
   const [produse, setProduse] = useState([]);
   const { produsAdaugatInCos, setProdusAdaugatInCos } =
     useContext(GeneralContext);
-  const userId = localStorage.getItem("userId");
-  const navigate = useNavigate()
- 
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+  // const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
   const handleAdaugaCos = async (prodId) => {
-    if (userId) {
-      await adaugaInCos(userId, prodId);
+    if (token) {
+      await adaugaInCos(token, prodId);
       setProdusAdaugatInCos(produsAdaugatInCos + 1);
       navigate("/cos-cumparaturi");
     } else {
@@ -92,12 +98,11 @@ export default function Home() {
   );
 }
 
-
 export const loaderProduse = async () => {
   try {
     const res = await produseShop();
     console.log(res);
-    return res
+    return res;
   } catch (e) {
     console.log(e);
     throw new Response("", {
@@ -105,4 +110,4 @@ export const loaderProduse = async () => {
       statusText: e,
     });
   }
-}
+};

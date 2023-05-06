@@ -43,12 +43,17 @@ const CosCumparaturi = () => {
   const { produsAdaugatInCos, setProdusAdaugatInCos } =
     useContext(GeneralContext);
   const navigate = useNavigate();
-  const userId = localStorage.getItem("userId");
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
   const fetchProduseCosCumparaturi = async () => {
-    if (userId !== "") {
+    if (token) {
       try {
-        console.log(userId);
-        const res = await cosCumparaturi(userId);
+        console.log(token);
+        const res = await cosCumparaturi(token);
         const totalInitial = res.reduce(
           (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
           0
@@ -67,41 +72,47 @@ const CosCumparaturi = () => {
 
   const handleStergeProdusCos = async (prodId, index) => {
     try {
-      const res = await stergeProdusCos(userId, prodId);
-      const totalNou = res.reduce(
-        (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
-        0
-      );
-      produseCosCumparaturi.splice(index, 1);
-      setProdusAdaugatInCos(produsAdaugatInCos - 1);
-      setProduseCosCumparaturi([...res]);
-      setTotal(totalNou.toFixed(2));
+      if (token) {
+        const res = await stergeProdusCos(token, prodId);
+        const totalNou = res.reduce(
+          (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
+          0
+        );
+        produseCosCumparaturi.splice(index, 1);
+        setProdusAdaugatInCos(produsAdaugatInCos - 1);
+        setProduseCosCumparaturi([...res]);
+        setTotal(totalNou.toFixed(2));
+      }
     } catch (e) {
       console.log(e);
     }
   };
   const handleIncrement = async (produsId) => {
-    await adaugaInCos(userId, produsId);
-    const res = await cosCumparaturi(userId);
-    const totalNou = res.reduce(
-      (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
-      0
-    );
-    setProdusAdaugatInCos(produsAdaugatInCos + 1);
-    setProduseCosCumparaturi([...res]);
-    setTotal(totalNou.toFixed(2));
+    if (token) {
+      await adaugaInCos(token, produsId);
+      const res = await cosCumparaturi(token);
+      const totalNou = res.reduce(
+        (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
+        0
+      );
+      setProdusAdaugatInCos(produsAdaugatInCos + 1);
+      setProduseCosCumparaturi([...res]);
+      setTotal(totalNou.toFixed(2));
+    }
   };
 
   const handleDecrement = async (produsId) => {
-    await scoateProdusCos(userId, produsId);
-    const res = await cosCumparaturi(userId);
-    const totalNou = res.reduce(
-      (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
-      0
-    );
-    setProdusAdaugatInCos(produsAdaugatInCos - 1);
-    setProduseCosCumparaturi([...res]);
-    setTotal(totalNou.toFixed(2));
+    if (token) {
+      await scoateProdusCos(token, produsId);
+      const res = await cosCumparaturi(token);
+      const totalNou = res.reduce(
+        (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
+        0
+      );
+      setProdusAdaugatInCos(produsAdaugatInCos - 1);
+      setProduseCosCumparaturi([...res]);
+      setTotal(totalNou.toFixed(2));
+    }
   };
 
   useEffect(() => {

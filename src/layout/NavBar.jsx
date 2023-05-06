@@ -28,7 +28,13 @@ function NavBar(props) {
   // const [currentPage, setCurrentPgae] = React.useState('')
   const { produsAdaugatInCos, setProdusAdaugatInCos, logOut } =
     React.useContext(GeneralContext);
-  const userId = localStorage.getItem("userId");
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+  // const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
@@ -36,7 +42,7 @@ function NavBar(props) {
     setAnchorElNav(event.currentTarget);
   };
   const handleOpenUserMenu = (event) => {
-    if (localStorage.getItem("token") !== "") {
+    if (token) {
       setAnchorElUser(event.currentTarget);
     } else {
       return navigate("login");
@@ -54,10 +60,14 @@ function NavBar(props) {
   };
 
   const bagdeCosCumparaturi = async () => {
-    const res = await cosCumparaturi(userId);
-    setProdusAdaugatInCos(
-      res.reduce((acc, curr) => acc + curr.produsCosCumparaturi.cantitate, 0)
-    );
+    if (token) {
+      const res = await cosCumparaturi(token);
+      setProdusAdaugatInCos(
+        res.reduce((acc, curr) => acc + curr.produsCosCumparaturi.cantitate, 0)
+      );
+    } else {
+      setProdusAdaugatInCos(0);
+    }
   };
   React.useEffect(() => {
     bagdeCosCumparaturi();
@@ -200,8 +210,8 @@ function NavBar(props) {
                     key={setting}
                     onClick={() => {
                       setting === "Contul meu"
-                      ? navigate("/contul-meu")
-                      : logOut();
+                        ? navigate("/contul-meu")
+                        : logOut();
                       handleCloseUserMenu();
                     }}
                   >

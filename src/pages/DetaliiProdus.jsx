@@ -50,12 +50,18 @@ const DetaliiProdus = () => {
   const produs = useLoaderData();
   const { produsAdaugatInCos, setProdusAdaugatInCos } =
   useContext(GeneralContext);
-  const userId = localStorage.getItem("userId");
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+  // const token = localStorage.getItem("token");
   const navigate = useNavigate()
 
   const handleAdaugaInCos = async (prodId) => {
-    if (userId) {
-      await adaugaInCos(userId, prodId);
+    if (token) {
+      await adaugaInCos(token, prodId);
       setProdusAdaugatInCos(produsAdaugatInCos + 1);
       navigate("/cos-cumparaturi");
     } else {

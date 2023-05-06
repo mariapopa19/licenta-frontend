@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { Box, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 
 const OrderContainer = styled(Paper)({
@@ -24,6 +25,7 @@ const DetailsButton = styled(Button)({
 });
 
 const ComandaItem = ({ id, data, valoare, status }) => {
+  const navigate = useNavigate()
   return (
     <OrderContainer>
       <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
@@ -32,13 +34,16 @@ const ComandaItem = ({ id, data, valoare, status }) => {
         </Typography>
         <Typography variant="body1" component="div">
           <Box sx={{ fontStyle: "italic" }}>Data: {data}</Box>
+        </Typography> 
+        <Typography variant="body1" component="div">
+          <Box sx={{ fontStyle: "italic" }}>Status: {status}</Box>
         </Typography>
         <Typography variant="body1" component="div">
           <Box sx={{ fontWeight: "bold" }}>Valoare: {valoare} lei</Box>
         </Typography>
       </Box>
       <Box>
-        <DetailsButton variant="outlined">Detalii comanda</DetailsButton>
+        <DetailsButton variant="outlined" onClick={() => navigate(`comanda/${id}`)}>Detalii comanda</DetailsButton>
       </Box>
     </OrderContainer>
   );

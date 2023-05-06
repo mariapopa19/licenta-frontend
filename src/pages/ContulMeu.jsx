@@ -44,9 +44,15 @@ const ContulMeu = () => {
   const [comenzi, setComenzi] = useState([]);
   const [detaliiUtilizatorRes, setDetaliiUtiizatorRes] = useState({});
   const { logOut } = useContext(GeneralContext);
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
   const navigate = useNavigate();
-  const userId = localStorage.getItem("userId");
-  const token = localStorage.getItem("token");
+  // const userId = localStorage.getItem("userId");
+  // const token = localStorage.getItem("token");
 
   const menuItems = [
     {
@@ -120,9 +126,9 @@ const ContulMeu = () => {
   };
 
   const fetchComenziUtilizator = async () => {
-    if (userId) {
-      console.log(userId);
-      const res = await comenziShop(userId);
+    if (token) {
+      console.log(token);
+      const res = await comenziShop(token);
       setComenzi(res);
     } else {
       navigate("/login");
@@ -191,7 +197,7 @@ const ContulMeu = () => {
               <Divider sx={{ mb: 3 }} />
               {/* Aici se va adauga componenta corespunzatoare selectiei din meniu */}
               {selectedMenuItem === "Comenzile Mele" ? (
-                <ComenzileMele comenzi={comenzi} />
+                <ComenzileMele  comenzi={comenzi} />
               ) : selectedMenuItem === "Contul Meu" ? (
                 <DetaliiContulMeu
                   numeUtilizator={detaliiUtilizatorRes.nume}

@@ -69,6 +69,7 @@ export default function LogIn() {
   const [pass, setPass] = useState("");
   const [typeErrorParola, setTypeErrorParola] = useState(false);
   const [typeErrorEmail, setTypeErrorEmail] = useState(false);
+  const [checked, setChecked] = useState(false);
   const { token, setToken, setUserId } = useContext(GeneralContext);
   const navigate = useNavigate();
 
@@ -80,11 +81,12 @@ export default function LogIn() {
         console.log(res);
         setToken(res.token);
         setUserId(res.userId);
-        // if (userId && token) {
-        localStorage.setItem("token", res.token);
-        localStorage.setItem("userId", res.userId);
+        if (checked) {
+          localStorage.setItem("token", res.token);
+        } else {
+          sessionStorage.setItem("token", res.token);
+        }
         navigate("/");
-        // }
       }
     } catch (e) {
       console.log(e);
@@ -177,6 +179,9 @@ export default function LogIn() {
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Ține-mă minte"
+              onChange={(e) => {
+                setChecked(e.target.checked);
+              }}
             />
             <RoundedButton
               type="submit"

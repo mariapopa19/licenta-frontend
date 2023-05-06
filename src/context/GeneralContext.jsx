@@ -24,6 +24,7 @@ const GeneralProvider = (props) => {
 
   const logOut = async () => {
     localStorage.clear();
+    sessionStorage.clear()
     setToken("");
     setUserId("");
     navigate("/");
