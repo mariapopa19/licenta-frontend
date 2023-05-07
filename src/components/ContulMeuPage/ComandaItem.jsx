@@ -43,7 +43,7 @@ const ComandaItem = ({ id, data, valoare, status }) => {
         </Typography>
       </Box>
       <Box>
-        <DetailsButton variant="outlined" onClick={() => navigate(`comanda/${id}`)}>Detalii comanda</DetailsButton>
+        <DetailsButton variant="outlined" onClick={() => navigate(`/contul-meu/comanda/${id}`)}>Detalii comanda</DetailsButton>
       </Box>
     </OrderContainer>
   );

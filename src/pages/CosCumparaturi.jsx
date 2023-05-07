@@ -61,7 +61,9 @@ const CosCumparaturi = () => {
         setProduseCosCumparaturi(res);
         setTotal(totalInitial.toFixed(2));
       } catch (e) {
-        console.log(e);
+        e.message === "jwt expired" || e.message === "jwt malformed"
+          ? navigate("/login")
+          : console.log(e.message);
       }
     } else {
       navigate("/login", { replace: true });
@@ -84,34 +86,48 @@ const CosCumparaturi = () => {
         setTotal(totalNou.toFixed(2));
       }
     } catch (e) {
-      console.log(e);
+      e.message === "jwt expired" || e.message === "jwt malformed"
+        ? navigate("/login")
+        : console.log(e.message);
     }
   };
   const handleIncrement = async (produsId) => {
     if (token) {
-      await adaugaInCos(token, produsId);
-      const res = await cosCumparaturi(token);
-      const totalNou = res.reduce(
-        (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
-        0
-      );
-      setProdusAdaugatInCos(produsAdaugatInCos + 1);
-      setProduseCosCumparaturi([...res]);
-      setTotal(totalNou.toFixed(2));
+      try {
+        await adaugaInCos(token, produsId);
+        const res = await cosCumparaturi(token);
+        const totalNou = res.reduce(
+          (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
+          0
+        );
+        setProdusAdaugatInCos(produsAdaugatInCos + 1);
+        setProduseCosCumparaturi([...res]);
+        setTotal(totalNou.toFixed(2));
+      } catch (e) {
+        e.message === "jwt expired" || e.message === "jwt malformed"
+          ? navigate("/login")
+          : console.log(e.message);
+      }
     }
   };
 
   const handleDecrement = async (produsId) => {
     if (token) {
-      await scoateProdusCos(token, produsId);
-      const res = await cosCumparaturi(token);
-      const totalNou = res.reduce(
-        (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
-        0
-      );
-      setProdusAdaugatInCos(produsAdaugatInCos - 1);
-      setProduseCosCumparaturi([...res]);
-      setTotal(totalNou.toFixed(2));
+      try {
+        await scoateProdusCos(token, produsId);
+        const res = await cosCumparaturi(token);
+        const totalNou = res.reduce(
+          (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,
+          0
+        );
+        setProdusAdaugatInCos(produsAdaugatInCos - 1);
+        setProduseCosCumparaturi([...res]);
+        setTotal(totalNou.toFixed(2));
+      } catch (e) {
+        e.message === "jwt expired" || e.message === "jwt malformed"
+          ? navigate("/login")
+          : console.log(e.message);
+      }
     }
   };
 

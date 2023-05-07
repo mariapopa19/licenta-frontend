@@ -19,17 +19,9 @@ import {
   ShoppingBasketOutlined,
 } from "@mui/icons-material";
 import NavBar from "../layout/NavBar";
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  comenziShop,
-  detaliiUtilizator,
-  modificaDetaliiUtilizaor,
-} from "../api";
-import ComenzileMele from "../components/ContulMeuPage/ComenzileMele";
-import DetaliiContulMeu from "../components/ContulMeuPage/DetaliiContulMeu";
+import { useContext,  useState } from "react";
+import {  Outlet, useNavigate } from "react-router-dom";
 import { GeneralContext } from "../context/GeneralContext";
-import SchimbaParola from "../components/ContulMeuPage/SchimbaParola";
 
 const drawerWidth = 240;
 
@@ -41,35 +33,31 @@ const ContulMeu = () => {
     setSelectedMenuItem(menuText);
     setIsMenuOpen(false);
   };
-  const [comenzi, setComenzi] = useState([]);
-  const [detaliiUtilizatorRes, setDetaliiUtiizatorRes] = useState({});
+ 
   const { logOut } = useContext(GeneralContext);
-  let token = localStorage.getItem("token");
-  if (token) {
-    token = localStorage.getItem("token");
-  } else {
-    token = sessionStorage.getItem("token");
-  }
+  
   const navigate = useNavigate();
-  // const userId = localStorage.getItem("userId");
-  // const token = localStorage.getItem("token");
 
   const menuItems = [
     {
       text: "Contul Meu",
       icon: <AccountCircleOutlined />,
+      path: "detalii-utilizator",
     },
     {
       text: "Comenzile Mele",
       icon: <ShoppingBasketOutlined />,
+      path: "comenzi",
     },
     {
       text: "Adresele Mele",
       icon: <LocationOnOutlined />,
+      path: "adresele-mele",
     },
     {
       text: "Schimba Parola",
       icon: <LockOutlined />,
+      path: "schimba-parola",
     },
     {
       text: "Deconectare",
@@ -84,7 +72,14 @@ const ContulMeu = () => {
           <ListItem
             key={item.text}
             component="div"
-            onClick={() => handleMenuItemClick(item.text)}
+            onClick={() => {
+              if (item.text === "Deconectare") {
+                logOut();
+              } else {
+                handleMenuItemClick(item.text);
+                navigate(item.path);
+              }
+            }}
             sx={{
               "&:hover": {
                 bgcolor: "action.hover",
@@ -105,41 +100,7 @@ const ContulMeu = () => {
     </Box>
   );
 
-  const fetchDetaliiUtilizator = async () => {
-    if (token) {
-      const res = await detaliiUtilizator(token);
-      setDetaliiUtiizatorRes(res);
-      console.log(detaliiUtilizatorRes);
-    } else {
-      navigate("/login");
-    }
-  };
-
-  const clickSalveazaDetaliiUtilizator = async (nume, email) => {
-    if (token) {
-      const res = await modificaDetaliiUtilizaor(token, nume, email);
-      console.log(res);
-      setDetaliiUtiizatorRes(res);
-    } else {
-      navigate("/login");
-    }
-  };
-
-  const fetchComenziUtilizator = async () => {
-    if (token) {
-      console.log(token);
-      const res = await comenziShop(token);
-      setComenzi(res);
-    } else {
-      navigate("/login");
-    }
-  };
-
-  useEffect(() => {
-    fetchDetaliiUtilizator();
-    fetchComenziUtilizator();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+ 
   return (
     <Grid container>
       <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -196,19 +157,16 @@ const ContulMeu = () => {
               </Typography>
               <Divider sx={{ mb: 3 }} />
               {/* Aici se va adauga componenta corespunzatoare selectiei din meniu */}
-              {selectedMenuItem === "Comenzile Mele" ? (
-                <ComenzileMele  comenzi={comenzi} />
+              <Outlet />
+              {/* {selectedMenuItem === "Comenzile Mele" ? (
+                <Link to="comenzi" />
               ) : selectedMenuItem === "Contul Meu" ? (
-                <DetaliiContulMeu
-                  numeUtilizator={detaliiUtilizatorRes.nume}
-                  emailUtilizator={detaliiUtilizatorRes.email}
-                  onClickSalveaza={clickSalveazaDetaliiUtilizator}
-                />
+                <Link to="detalii-utilizator" />
               ) : selectedMenuItem === "Schimba Parola" ? (
                 <SchimbaParola />
               ) : selectedMenuItem === "Deconectare" ? (
                 logOut()
-              ) : null}
+              ) : null} */}
             </Box>
           </Box>
         </Grid>

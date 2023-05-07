@@ -256,7 +256,7 @@ export const cosCumparaturi = async (token) => {
     const res = await axios.get(generateURL(`shop/cos-cumparaturi/${token}`));
     return res.data.produseCos;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -268,7 +268,7 @@ export const adaugaInCos = async (token, produsId) => {
     });
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -280,7 +280,7 @@ export const scoateProdusCos = async (token, produsId) => {
     });
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -291,7 +291,7 @@ export const stergeProdusCos = async (token, produsId) => {
     );
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -300,7 +300,7 @@ export const comenziShop = async (token) => {
     const res = await axios.get(generateURL(`shop/comenzi/${token}`));
     return res.data.comenzi;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -309,7 +309,7 @@ export const comandaShop = async (token, comandaId) => {
     const res = await axios.get(generateURL(`shop/comenzi/${token}/${comandaId}`));
     return res.data.comanda;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 }
 
@@ -318,7 +318,7 @@ export const detaliiUtilizator = async (token) => {
     const res = await axios.get(generateURL(`auth/user/${token}`));
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -330,6 +330,6 @@ export const modificaDetaliiUtilizaor = async (token, nume, email) => {
     });
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };

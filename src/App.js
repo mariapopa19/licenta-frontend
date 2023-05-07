@@ -18,7 +18,12 @@ import DetaliiProdus, { loaderDetaliiProdus } from "./pages/DetaliiProdus";
 import { GeneralProvider } from "./context/GeneralContext";
 import { loaderProduse } from "./pages/Home";
 import ContulMeu from "./pages/ContulMeu";
-import DetaliiComanda from "./components/ContulMeuPage/DetaliiComanda";
+import DetaliiComanda, {
+  loadComanda,
+} from "./components/ContulMeuPage/DetaliiComanda";
+import DetaliiContulMeu from "./components/ContulMeuPage/DetaliiContulMeu";
+import ComenzileMele from "./components/ContulMeuPage/ComenzileMele";
+import SchimbaParola from "./components/ContulMeuPage/SchimbaParola";
 const Home = lazy(() => import("./pages/Home"));
 
 const router = createBrowserRouter(
@@ -45,9 +50,17 @@ const router = createBrowserRouter(
         element={<DetaliiProdus />}
         errorElement={<ErrorPage />}
       />
-      <Route path="contul-meu" element={<ContulMeu />} />
-        <Route path="contul-meu/comanda/:comandaId" element={<DetaliiComanda />} />
-      {/* </Route> */}
+      <Route path="contul-meu" element={<ContulMeu />}>
+        <Route index path="detalii-utilizator" element={<DetaliiContulMeu />} />
+        <Route path="comenzi" element={<ComenzileMele />} />
+        <Route
+          path="comanda/:comandaId"
+          loader={loadComanda}
+          element={<DetaliiComanda />}
+          errorElement={<ErrorPage />}
+        />
+        <Route path="schimba-parola" element={<SchimbaParola />} />
+      </Route>
     </Route>
   )
 );

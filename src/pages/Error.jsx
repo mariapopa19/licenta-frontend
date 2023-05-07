@@ -33,6 +33,7 @@ const ErrorButton = styled(Button)(({ theme }) => ({
 export default function ErrorPage() {
   const error = useRouteError();
   const theme = useTheme();
+  console.log(error);
 
   if (isRouteErrorResponse(error)) {
     return (
@@ -42,6 +43,8 @@ export default function ErrorPage() {
         </Heading>
         <Subheading variant="h4" gutterBottom>
           {error.status}
+        </Subheading>
+        <Subheading variant="h4" gutterBottom>
           {error.statusText}
           {error.data?.message && <p>{error.data.message}</p>}
         </Subheading>

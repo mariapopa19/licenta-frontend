@@ -210,7 +210,7 @@ function NavBar(props) {
                     key={setting}
                     onClick={() => {
                       setting === "Contul meu"
-                        ? navigate("/contul-meu")
+                        ? navigate("/contul-meu/detalii-utilizator")
                         : logOut();
                       handleCloseUserMenu();
                     }}

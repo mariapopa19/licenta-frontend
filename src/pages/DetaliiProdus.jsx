@@ -49,7 +49,7 @@ const ProductCompany = styled(Typography)(({ theme }) => ({
 const DetaliiProdus = () => {
   const produs = useLoaderData();
   const { produsAdaugatInCos, setProdusAdaugatInCos } =
-  useContext(GeneralContext);
+    useContext(GeneralContext);
   let token = localStorage.getItem("token");
   if (token) {
     token = localStorage.getItem("token");
@@ -57,17 +57,23 @@ const DetaliiProdus = () => {
     token = sessionStorage.getItem("token");
   }
   // const token = localStorage.getItem("token");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleAdaugaInCos = async (prodId) => {
     if (token) {
-      await adaugaInCos(token, prodId);
-      setProdusAdaugatInCos(produsAdaugatInCos + 1);
-      navigate("/cos-cumparaturi");
+      try {
+        await adaugaInCos(token, prodId);
+        setProdusAdaugatInCos(produsAdaugatInCos + 1);
+        navigate("/cos-cumparaturi");
+      } catch (e) {
+        e.message === "jwt expired" || e.message === "jwt malformed"
+          ? navigate("/login")
+          : console.log(e.message);
+      }
     } else {
       navigate("/login");
     }
-  }
+  };
 
   return (
     <Grid container>
@@ -104,7 +110,11 @@ const DetaliiProdus = () => {
                     </ProductCompany>
                   </Box>
                   <Box mt={2}>
-                    <Button variant="contained" color="primary" onClick={() => handleAdaugaInCos(produs.id)}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleAdaugaInCos(produs.id)}
+                    >
                       Adaugă în coș
                     </Button>
                   </Box>
@@ -121,7 +131,14 @@ const DetaliiProdus = () => {
             </Grid>
           </Grid>
         </RootBox>
-        <Grid item lg={8} direction='column' spacing={2} container sx={{px: 4}}>
+        <Grid
+          item
+          lg={8}
+          direction="column"
+          spacing={2}
+          container
+          sx={{ px: 4 }}
+        >
           <Grid item>
             <ProductTitle variant="h2">Descriere</ProductTitle>
           </Grid>
@@ -143,7 +160,7 @@ export const loaderDetaliiProdus = async ({ params }) => {
     // console.log(res);
     return res;
   } catch (e) {
-    throw new Error({
+    throw new Response('Not found',{
       status: 404,
       statusText: e,
     });

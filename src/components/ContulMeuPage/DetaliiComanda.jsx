@@ -1,9 +1,9 @@
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
-import { Fragment, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Box, Divider } from "@mui/material";
+import { Fragment } from "react";
+import { useLoaderData, useParams } from "react-router-dom";
 import { comandaShop } from "../../api";
 
 const OrderDetailsContainer = styled(Paper)({
@@ -11,6 +11,7 @@ const OrderDetailsContainer = styled(Paper)({
   flexDirection: "column",
   alignItems: "center",
   padding: "1rem",
+  paddingTop: "2rem",
   marginBottom: "1rem",
 });
 
@@ -37,11 +38,14 @@ const OrderDetailsPrice = styled(Typography)({
 const OrderDetailsTotal = styled(Typography)({
   marginTop: "1rem",
   fontWeight: "bold",
+  marginLeft: "auto",
 });
+
 const DetaliiComanda = () => {
   const { comandaId } = useParams();
-  const navigate = useNavigate();
-  const [comanda, setComanda] = useState({});
+  const comanda = useLoaderData();
+  const produse = comanda.produse;
+
   let token = localStorage.getItem("token");
   if (token) {
     token = localStorage.getItem("token");
@@ -51,36 +55,11 @@ const DetaliiComanda = () => {
 
   const calculateTotal = () => {
     let total = 0;
-    comanda.produse.forEach((item) => {
-      total += item.price * item.quantity;
+    produse.forEach((item) => {
+      total += item.pret * item.produseComanda.cantitate;
     });
-    return total;
+    return total.toFixed(2);
   };
-
-  const formatDate = (date) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(date).toLocaleDateString("ro-RO", options);
-  };
-
-  const formatTime = (date) => {
-    const options = { hour: "2-digit", minute: "2-digit" };
-    return new Date(date).toLocaleTimeString("ro-RO", options);
-  };
-
-  const fetchComanda = async () => {
-    try {
-      const res = await comandaShop(token, comandaId);
-      setComanda(res);
-      console.log(comanda);
-    } catch (e) {
-      e.message === "jwt expired" ? navigate("/login") : console.log(e.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchComanda();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Box
@@ -89,10 +68,7 @@ const DetaliiComanda = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#E0E0E0",
-        borderRadius: "16px",
-        padding: "32px",
-        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+        px: 30,
       }}
     >
       <Typography
@@ -102,11 +78,13 @@ const DetaliiComanda = () => {
         Detalii comanda #{comandaId}
       </Typography>
       <Box sx={{ width: "100%" }}>
-        <OrderDetailsContainer>
-          <OrderDetailsHeader variant="h6">Produs</OrderDetailsHeader>
-          <OrderDetailsHeader variant="h6">Cantitate</OrderDetailsHeader>
-          <OrderDetailsHeader variant="h6">Pret</OrderDetailsHeader>
-          {comanda.produse.map((item) => (
+        <OrderDetailsContainer elevation={0}>
+          <OrderDetailsRow>
+            <OrderDetailsHeader variant="h6">Produs</OrderDetailsHeader>
+            <OrderDetailsHeader variant="h6">Cantitate</OrderDetailsHeader>
+            <OrderDetailsHeader variant="h6">Pret</OrderDetailsHeader>
+          </OrderDetailsRow>
+          {produse.map((item) => (
             <Fragment key={item.id}>
               <OrderDetailsRow>
                 <OrderDetailsName>{item.denumire}</OrderDetailsName>
@@ -117,34 +95,53 @@ const DetaliiComanda = () => {
               </OrderDetailsRow>
             </Fragment>
           ))}
+
+          <Divider sx={{ margin: "0.5rem 0" }} />
+          <OrderDetailsRow sx={{ justifyContent: "flex-end" }}>
+            <OrderDetailsTotal>Total: {calculateTotal()} lei</OrderDetailsTotal>
+          </OrderDetailsRow>
+        </OrderDetailsContainer>
+        <Divider variant="middle" />
+        <OrderDetailsContainer elevation={0}>
+          <OrderDetailsHeader variant="h6">Detalii comanda</OrderDetailsHeader>
+          <OrderDetailsRow>
+            <OrderDetailsName>Data comanda:</OrderDetailsName>
+            <OrderDetailsPrice>
+              {comanda.ziLivrare} - {comanda.intervalLivrare}
+            </OrderDetailsPrice>
+          </OrderDetailsRow>
           <OrderDetailsRow>
             <OrderDetailsName>Status comanda:</OrderDetailsName>
             <OrderDetailsPrice>{comanda.status}</OrderDetailsPrice>
           </OrderDetailsRow>
           <OrderDetailsRow>
-            <OrderDetailsName>Adresa de livrare:</OrderDetailsName>
-            <OrderDetailsPrice>{`${comanda.adresa}, ${comanda.oras}, ${comanda.judet}`}</OrderDetailsPrice>
+            <OrderDetailsName>Adresa livrare:</OrderDetailsName>
+            <OrderDetailsPrice>{comanda.adresa}</OrderDetailsPrice>
           </OrderDetailsRow>
-          <OrderDetailsRow>
-            <OrderDetailsName>Ziua de livrare:</OrderDetailsName>
-            <OrderDetailsPrice>
-              {formatDate(comanda.ziLivrare)}
-            </OrderDetailsPrice>
-          </OrderDetailsRow>
-          <OrderDetailsRow>
-            <OrderDetailsName>Ora de livrare:</OrderDetailsName>
-            <OrderDetailsPrice>
-              {formatTime(comanda.intervalLivrare)}
-            </OrderDetailsPrice>
-          </OrderDetailsRow>
-          <OrderDetailsRow>
-            <OrderDetailsName>Modalitate de plata:</OrderDetailsName>
-            <OrderDetailsPrice>Cash sau Card</OrderDetailsPrice>
-          </OrderDetailsRow>
-          <OrderDetailsTotal>Total: {calculateTotal()} lei</OrderDetailsTotal>
         </OrderDetailsContainer>
       </Box>
     </Box>
   );
 };
+
 export default DetaliiComanda;
+
+export const loadComanda = async ({ params }) => {
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+  const comandaId = params.comandaId;
+
+  try {
+    const res = await comandaShop(token, comandaId);
+    return res;
+  } catch (e) {
+    throw new Response("", {
+      status: 404,
+      statusText: e.message,
+    });
+  }
+};

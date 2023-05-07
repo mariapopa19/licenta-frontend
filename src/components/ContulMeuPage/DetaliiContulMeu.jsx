@@ -1,16 +1,63 @@
 import { Grid, Typography } from "@mui/material";
 import { RoundedTextField } from "../TextField";
 import { RoundedButton } from "../RoundedButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { detaliiUtilizator, modificaDetaliiUtilizaor } from "../../api";
+import { useNavigate } from "react-router-dom";
 
 const DetaliiContulMeu = ({
   numeUtilizator,
   emailUtilizator,
-  onClickSalveaza,
+  
 }) => {
-  const [nume, setNume] = useState(numeUtilizator);
-  const [email, setEmail] = useState(emailUtilizator);
-  console.log(`nume: ${nume}, email: ${email}`);
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+  const navigate = useNavigate();
+  const [nume, setNume] = useState('');
+  const [email, setEmail] = useState('');
+
+  const onClickSalveaza = async (nume, email) => {
+    if (token) {
+      try {
+        const res = await modificaDetaliiUtilizaor(token, nume, email);
+        console.log(res);
+        setNume(res.nume);
+        setEmail(res.email);
+      } catch (e) {
+        e.message === "jwt expired" || e.message === "jwt malformed"
+          ? navigate("/login")
+          : console.log(e.message);
+      }
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const fetchDetaliiUtilizator = async () => {
+    if (token) {
+      try {
+        const res = await detaliiUtilizator(token);
+        setNume(res.nume);
+        setEmail(res.email);
+      } catch (e) {
+        e.message === "jwt expired" || e.message === "jwt malformed"
+          ? navigate("/login")
+          : console.log(e.message);
+      }
+    } else {
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    fetchDetaliiUtilizator()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Grid container>
       <Grid
@@ -24,7 +71,7 @@ const DetaliiContulMeu = ({
           <Typography variant="h6">Nume</Typography>
           <RoundedTextField
             fullWidth
-            value={nume ? nume : numeUtilizator}
+            value={nume}
             onChange={(e) => {
               setNume(e.target.value);
             }}
@@ -34,7 +81,7 @@ const DetaliiContulMeu = ({
           <Typography variant="h6">Email</Typography>
           <RoundedTextField
             fullWidth
-            value={email ? email : emailUtilizator}
+            value={email}
             onChange={(e) => {
               setEmail(e.target.value);
             }}
