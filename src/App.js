@@ -24,6 +24,12 @@ import DetaliiComanda, {
 import DetaliiContulMeu from "./components/ContulMeuPage/DetaliiContulMeu";
 import ComenzileMele from "./components/ContulMeuPage/ComenzileMele";
 import SchimbaParola from "./components/ContulMeuPage/SchimbaParola";
+import Curier, { loaderCurier } from "./pages/Curier";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
+import DetaliiComandaCheckout from "./pages/DetaliiComanda";
+import ParolaUitata from "./pages/ParolaUitata";
+import ConfirmationPage from "./pages/ConfirmareEmailTrimis";
+import SchimbareParola from "./pages/SchimbareParola";
 const Home = lazy(() => import("./pages/Home"));
 
 const router = createBrowserRouter(
@@ -41,9 +47,15 @@ const router = createBrowserRouter(
         errorElement={<ErrorPage />}
       />
       <Route path="/login" element={<LogIn />} />
+      <Route path="/parola-uitata" element={<ParolaUitata />} />
+      <Route path="/email-trimis" element={<ConfirmationPage />} />
+      <Route path="/resetare-parola/:token" element={<SchimbareParola />} />
+      
       <Route path="/signup" element={<SignUp />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/cos-cumparaturi" element={<CosCumparaturi />} />
+      <Route path="/detalii-comanda" element={<DetaliiComandaCheckout />} />
+      <Route path="/checkout-success" element={<CheckoutSuccess />} />
       <Route
         path="/produs/:produsId"
         loader={loaderDetaliiProdus}
@@ -61,6 +73,12 @@ const router = createBrowserRouter(
         />
         <Route path="schimba-parola" element={<SchimbaParola />} />
       </Route>
+      <Route
+        path="curier"
+        loader={loaderCurier}
+        element={<Curier />}
+        errorElement={<ErrorPage />}
+      />
     </Route>
   )
 );

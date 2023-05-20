@@ -18,7 +18,7 @@ import { GeneralContext } from "../context/GeneralContext";
 import { cosCumparaturi } from "../api";
 // import { GeneralContext } from "../context/GeneralContext";
 
-const pages = ["home", "admin"];
+const pages = ["home", "admin", "curier"];
 const settings = ["Contul meu", "Deconectare"];
 
 function NavBar(props) {
@@ -223,7 +223,7 @@ function NavBar(props) {
                 size="large"
                 color="inherit"
                 edge="end"
-                onClick={() => navigate("cos-cumparaturi")}
+                onClick={() => navigate("/cos-cumparaturi", {replace: true})}
               >
                 <Badge badgeContent={produsAdaugatInCos} color="error">
                   <ShoppingCartIcon />

@@ -75,6 +75,8 @@ export default function LogIn() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setTypeErrorEmail(false)
+    setTypeErrorParola(false)
     try {
       const res = await login(email, pass);
       if (res.token) {
@@ -90,9 +92,9 @@ export default function LogIn() {
       }
     } catch (e) {
       console.log(e);
-      if (e === "Parola gresita!") {
+      if (e.message === "Parola gresita!") {
         setTypeErrorParola(true);
-      } else if (e === "Nu exista utilizator cu acest email.") {
+      } else if (e.message === "Nu exista utilizator cu acest email.") {
         setTypeErrorEmail(true);
       }
     }
@@ -193,9 +195,9 @@ export default function LogIn() {
             </RoundedButton>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <NavLink to="/parola-uitata" end>
                   Ți-ai uitat parola?
-                </Link>
+                </NavLink>
               </Grid>
               <Grid item>
                 <NavLink to="/signup" end>

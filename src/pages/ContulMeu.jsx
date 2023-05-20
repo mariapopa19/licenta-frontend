@@ -15,7 +15,6 @@ import {
   AccountCircleOutlined,
   ExitToAppOutlined,
   LockOutlined,
-  LocationOnOutlined,
   ShoppingBasketOutlined,
 } from "@mui/icons-material";
 import NavBar from "../layout/NavBar";
@@ -48,11 +47,6 @@ const ContulMeu = () => {
       text: "Comenzile Mele",
       icon: <ShoppingBasketOutlined />,
       path: "comenzi",
-    },
-    {
-      text: "Adresele Mele",
-      icon: <LocationOnOutlined />,
-      path: "adresele-mele",
     },
     {
       text: "Schimba Parola",

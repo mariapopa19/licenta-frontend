@@ -1,5 +1,4 @@
 import NavBar from "../layout/NavBar";
-// import ItemCart from "../components/ItemCart";
 import { useContext, useEffect, useState } from "react";
 import {
   adaugaInCos,
@@ -10,10 +9,10 @@ import {
 
 import { Grid, Typography, Divider, Button, styled } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-// import { GeneralContext } from "../context/GeneralContext";
 import ItemCart from "../components/ItemCart";
 import { useNavigate } from "react-router-dom";
 import { GeneralContext } from "../context/GeneralContext";
+import StepperComponent from "../layout/Stepper";
 
 const Root = styled("div")({
   flexGrow: 1,
@@ -62,7 +61,7 @@ const CosCumparaturi = () => {
         setTotal(totalInitial.toFixed(2));
       } catch (e) {
         e.message === "jwt expired" || e.message === "jwt malformed"
-          ? navigate("/login")
+          ? navigate("/login", { replace: true })
           : console.log(e.message);
       }
     } else {
@@ -70,7 +69,7 @@ const CosCumparaturi = () => {
       // ! eroare aici, de rezolvat
     }
   };
-  console.log(produseCosCumparaturi);
+  // console.log(produseCosCumparaturi);
 
   const handleStergeProdusCos = async (prodId, index) => {
     try {
@@ -131,6 +130,14 @@ const CosCumparaturi = () => {
     }
   };
 
+  const handleFinalizeazaComanda = async () => {
+    if (token) {
+      navigate("/detalii-comanda");
+    } else {
+      navigate("/login");
+    }
+  };
+
   useEffect(() => {
     fetchProduseCosCumparaturi();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,6 +146,9 @@ const CosCumparaturi = () => {
     <Grid container>
       <Grid item md={12} sm={12} xs={12}>
         <NavBar />
+      </Grid>
+      <Grid item md={12} sm={12} xs={12} >
+        <StepperComponent />
       </Grid>
       <Grid item md={10} sm={10} xs={12} sx={{ mt: 10, mx: 10 }}>
         <Root>
@@ -189,18 +199,25 @@ const CosCumparaturi = () => {
                   Subtotal: {total} lei
                 </Typography>
                 <Typography variant="subtitle1">Livrare: 0 lei</Typography>
-                <Divider
-                  style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}
-                />
+                <Divider sx={{ marginTop: "0.5rem", marginBottom: "0.5rem" }} />
                 <Total variant="h6">Total comandă: {total} lei</Total>
               </div>
-              <Button variant="contained" size="large" fullWidth>
-                Finalizare comandă
+              <Button
+                onClick={() => handleFinalizeazaComanda()}
+                variant="contained"
+                size="large"
+                fullWidth
+              >
+                Pasul urmator
               </Button>
             </Grid>
           </Grid>
         </Root>
       </Grid>
+      <Divider />
+      {/* <Grid item md={10} sm={10} xs={12} sx={{ mt: 10, mx: 10 }}>
+        <DetaliiComanda />
+      </Grid> */}
       {/* <Grid item md={8} sx={{m:2, mx: 10, my: 4, justifyContent: 'center'}} container>
         <Typography variant="h5" >Cos Cumpărături</Typography>
         <Grid item md={4}>

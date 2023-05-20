@@ -5,11 +5,7 @@ import { useEffect, useState } from "react";
 import { detaliiUtilizator, modificaDetaliiUtilizaor } from "../../api";
 import { useNavigate } from "react-router-dom";
 
-const DetaliiContulMeu = ({
-  numeUtilizator,
-  emailUtilizator,
-  
-}) => {
+const DetaliiContulMeu = () => {
   let token = localStorage.getItem("token");
   if (token) {
     token = localStorage.getItem("token");

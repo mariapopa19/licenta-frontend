@@ -19,7 +19,7 @@ export const creareUtilizator = async (email, parola, nume) => {
     });
     return res.data;
   } catch (err) {
-    throw Error(err.message);
+    throw Error(err.response.data.message);
   }
 };
 
@@ -31,27 +31,36 @@ export const login = async (email, parola) => {
     });
     return res.data;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
 export const schimbaParolaPas1 = async (email) => {
   try {
-    const res = await axios.get(generateURL("auth/new-pass"), {
-      email: email,
+    const res = await axios.get(generateURL(`auth/new-pass/${email}`));
+    return res.data;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+};
+
+export const schimbaParolaPas2 = async (token, parola) => {
+  try {
+    const res = await axios.post(generateURL(`auth/new-pass/${token}`), {
+      parola: parola,
     });
     return res.data;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
-};
+}
 
 export const produseAdmin = async () => {
   try {
     const res = await axios.get(generateURL("admin/produse"));
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -74,7 +83,7 @@ export const adaugaProdus = async (
     });
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -94,7 +103,7 @@ export const modificaProdus = async (
     });
     return res.data;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -103,7 +112,7 @@ export const deleteProdus = async (produsId) => {
     const res = await axios.delete(generateURL(`admin/produs/${produsId}`));
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -112,7 +121,7 @@ export const firmeAdmin = async () => {
     const res = await axios.get(generateURL("admin/firme"));
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -125,7 +134,7 @@ export const adaugaFirma = async (denumire, data_inceput, data_finalizare) => {
     });
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -137,7 +146,7 @@ export const modificaFirma = async (firmaId, denumire, data_finalizare) => {
     });
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 export const deleteFirma = async (firmaId) => {
@@ -145,7 +154,7 @@ export const deleteFirma = async (firmaId) => {
     const res = await axios.delete(generateURL(`admin/firma/${firmaId}`));
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -154,7 +163,7 @@ export const comenziAdmin = async () => {
     const res = await axios.get(generateURL("admin/comenzi"));
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -163,7 +172,7 @@ export const comandaAdmin = async (comandaId) => {
     const res = await axios.get(generateURL(`admin/comanda/${comandaId}`));
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -183,7 +192,7 @@ export const modificaComandaAdmin = async (
     });
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -192,7 +201,7 @@ export const categoriiAdmin = async () => {
     const res = await axios.get(generateURL("admin/categorii"));
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -203,7 +212,7 @@ export const adaugaCategorie = async (denumire) => {
     });
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -217,7 +226,7 @@ export const modificaCategorie = async (categorieId, denumire) => {
     );
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -228,7 +237,7 @@ export const deleteCategorie = async (categorieId) => {
     );
     return res.data.result;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -237,7 +246,7 @@ export const produseShop = async () => {
     const res = await axios.get(generateURL("shop/produse"));
     return res.data;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
@@ -246,10 +255,12 @@ export const produsShop = async (produsId) => {
     const res = await axios.get(generateURL(`shop/produse/${produsId}`));
     return res.data.produs;
   } catch (e) {
-    throw Error(e.message);
+    throw Error(e.response.data.message);
   }
 };
 
+
+// * Cos de cumparaturi
 export const cosCumparaturi = async (token) => {
   try {
     console.log(token);
@@ -295,6 +306,25 @@ export const stergeProdusCos = async (token, produsId) => {
   }
 };
 
+// ! plata cu cardul 
+export const cardPayment = async (token, adresa, oras, judet, ziLivrare, oraLivrare) => {
+  try{
+    const res = await axios.post(generateURL('shop/create-checkout-session'), {
+      token: token,
+      adresa: adresa,
+      oras: oras,
+      judet: judet,
+      ziLivrare: ziLivrare,
+      oraLivrare: oraLivrare
+    })
+    return res.data;
+  }catch (e) {
+    throw Error(e.response.data.message);
+  }
+}
+
+
+// * Pagina cu detaliile personale 
 export const comenziShop = async (token) => {
   try {
     const res = await axios.get(generateURL(`shop/comenzi/${token}`));
@@ -306,12 +336,14 @@ export const comenziShop = async (token) => {
 
 export const comandaShop = async (token, comandaId) => {
   try {
-    const res = await axios.get(generateURL(`shop/comenzi/${token}/${comandaId}`));
+    const res = await axios.get(
+      generateURL(`shop/comenzi/${token}/${comandaId}`)
+    );
     return res.data.comanda;
   } catch (e) {
     throw Error(e.response.data.message);
   }
-}
+};
 
 export const detaliiUtilizator = async (token) => {
   try {
@@ -333,3 +365,54 @@ export const modificaDetaliiUtilizaor = async (token, nume, email) => {
     throw Error(e.response.data.message);
   }
 };
+
+export const comenziShip = async (token, oras) => {
+  try {
+    const res = await axios.get(generateURL(`ship/comenzi/${token}/${oras}`));
+    return res.data.comenzi;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+};
+
+export const comandaShip = async(token, comandaId) => {
+  try {
+    const res = await axios.get(generateURL(`ship/comanda/${token}/${comandaId}`));
+    return res.data.comanda;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+}
+
+export const preiaComanda = async (token, comandaId) => {
+  try {
+    const res = await axios.post(generateURL('ship/comanda'), {
+      token: token,
+      comandaId: comandaId
+    });
+    return res.data.comanda;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+}
+
+export const comandaFinalizataShipper = async (token, comandaId) => {
+  try {
+    const res = await axios.post(generateURL('ship/comanda-finalizata'), {
+      token: token,
+      comandaId: comandaId
+    });
+    return res.data.comanda;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+}
+
+export const judeteRomania = async () => {
+  try {
+    const res = await axios.get('https://roloca.coldfuse.io/judete');
+    return res.data;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+}
