@@ -3,11 +3,31 @@ import { RoundedTextField } from "../TextField";
 import { RoundedButton } from "../RoundedButton";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { schimbaParolaPas2 } from "../../api";
 
 const SchimbaParola = () => {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
+  const [newPassword, setNewPassword] = useState("");
+  const navigate = useNavigate();
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+
+  const handleSavlveazaParolaNoua = async () => {
+    try {
+      await schimbaParolaPas2(token, newPassword);
+    } catch (e) {
+      e.message === "jwt expired" || e.message === "jwt malformed"
+          ? navigate("/login")
+          : console.log(e.message);
+    }
+  }
   return (
     <Grid container>
       <Grid
@@ -21,6 +41,8 @@ const SchimbaParola = () => {
           <Typography variant="h6">Parola Nouă</Typography>
           <RoundedTextField
             fullWidth
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
             type={showPassword ? "text" : "password"}
             InputProps={{
               // <-- This is where the toggle button is added.
@@ -46,7 +68,7 @@ const SchimbaParola = () => {
             justifyContent: "right",
           }}
         >
-          <RoundedButton variant="contained" size="large">
+          <RoundedButton variant="contained" size="large" onClick={handleSavlveazaParolaNoua}>
             Salvează
           </RoundedButton>
         </Grid>

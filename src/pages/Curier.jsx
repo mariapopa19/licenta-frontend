@@ -1,10 +1,13 @@
 import {
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Grid,
   List,
   ListItem,
   ListItemText,
-  Modal,
   TextField,
 } from "@mui/material";
 import NavBar from "../layout/NavBar";
@@ -40,7 +43,8 @@ const OrdersList = styled(List)({
 const OrderItem = styled(ListItem)({
   display: "flex",
   justifyContent: "space-between",
-  border: "2px solid rgba(0, 0, 0, 0.12)",
+  border: "2px solid",
+  borderRadius: '10px',
   padding: 16,
   marginBottom: 16,
 });
@@ -62,56 +66,39 @@ const OrderDeliveryTime = styled("div")({
   fontStyle: "italic",
 });
 
-const TakeOrderButton = styled(Button)({
-  fontSize: 16,
-  fontWeight: "bold",
-  backgroundColor: "#4caf50",
-  color: "#ffffff",
-  "&:hover": {
-    backgroundColor: "#388e3c",
-  },
-});
-const ModalContainer = styled("div")({
+const DialogContainer = styled(DialogContent)({
   display: "flex",
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
   flexDirection: "column",
   alignItems: "center",
-  backgroundColor: "#fff",
-  border: "2px solid #000",
-  borderRadius: 8,
-  padding: 16,
   outline: "none",
-  boxShadow: 24,
 });
 
-const ModalTitle = styled("h2")({
+const DialogTitle1 = styled(DialogTitle)({
   fontSize: 24,
   marginBottom: 16,
 });
 
-const ModalDetails = styled("div")({
+const DialogDetails = styled("div")({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
 });
 
-const ModalLabel = styled("div")({
+const DialogLabel = styled("div")({
   fontWeight: "bold",
   marginBottom: 8,
 });
 
-const ModalValue = styled("div")({
+const DialogValue = styled("div")({
   marginBottom: 16,
 });
 
-const ModalButtonContainer = styled("div")({
+const DialogButtonContainer = styled(DialogActions)({
   display: "flex",
   justifyContent: "flex-end",
   marginTop: 16,
 });
+
 const CloseButton = styled(Button)({
   marginLeft: 16,
 });
@@ -120,7 +107,7 @@ const Curier = () => {
   const [searchText, setSearchText] = useState("Mangalia");
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState({ produse: [] });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const navigate = useNavigate();
   let token = localStorage.getItem("token");
@@ -159,7 +146,7 @@ const Curier = () => {
     try {
       const res = await comandaShip(token, comandaId);
       setSelectedOrder(res);
-      setIsModalOpen(true);
+      setIsDialogOpen(true);
     } catch (e) {
       e.message === "jwt expired" || e.message === "jwt malformed"
         ? navigate("/login")
@@ -167,8 +154,8 @@ const Curier = () => {
     }
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
   };
 
   useEffect(() => {
@@ -213,7 +200,7 @@ const Curier = () => {
                     <OrderCity>{order.oras}</OrderCity>
                     <OrderAddress>{order.adresa}</OrderAddress>
                     <OrderDeliveryTime>
-                      Livrare până la:{order.intervalLivrare}
+                      Livrare până la: {order.intervalLivrare}
                     </OrderDeliveryTime>
                   </OrderDetails>
                   {/* <TakeOrderButton
@@ -228,9 +215,9 @@ const Curier = () => {
         </PageContainer>
       </Grid>
       <Grid item>
-        <ModalDetaliiComanda
-          isModalOpen={isModalOpen}
-          handleCloseModal={handleCloseModal}
+        <DialogDetaliiComanda
+          open={isDialogOpen}
+          handleCloseDialog={handleCloseDialog}
           selectedOrder={selectedOrder}
           handleTakeOrder={handleTakeOrder}
         />
@@ -239,48 +226,57 @@ const Curier = () => {
   );
 };
 
-export const ModalDetaliiComanda = ({
-  isModalOpen,
-  handleCloseModal,
+export const DialogDetaliiComanda = ({
+  open,
+  handleCloseDialog,
   selectedOrder,
   handleTakeOrder,
 }) => {
+  console.log(selectedOrder);
   return (
-    <Modal
-      open={isModalOpen}
-      onClose={handleCloseModal}
-      aria-labelledby="modal-title"
-    >
+    <Dialog open={open} onClose={handleCloseDialog}>
       {selectedOrder ? (
-        <ModalContainer>
-          <ModalTitle id="modal-title">
+        <DialogContainer>
+          <DialogTitle1 id="dialog-title">
             Detalii comanda #{selectedOrder.id}
-          </ModalTitle>
-          <ModalDetails>
-            <ModalLabel>Locatie:</ModalLabel>
-            <OrderCity>{selectedOrder.oras}</OrderCity>
-            <ModalLabel>Adresa:</ModalLabel>
-            <ModalValue>{selectedOrder.adresa}</ModalValue>
-            <ModalLabel>Ziua de livrate:</ModalLabel>
-            <ModalValue>{selectedOrder.ziLivrare}</ModalValue>
-            <ModalLabel>Ora de livrare:</ModalLabel>
-            <ModalValue>{selectedOrder.intervalLivrare}</ModalValue>
-            <ModalLabel>Produse:</ModalLabel>
-            {selectedOrder.produse.map((produs) => (
-              <ModalValue key={produs.id}>
-                {produs.denumire} - {produs.produseComanda.cantitate} buc
-              </ModalValue>
-            ))}
-          </ModalDetails>
-          <ModalButtonContainer>
-            <TakeOrderButton onClick={() => handleTakeOrder(selectedOrder.id)}>
-              Ridica Comanda
-            </TakeOrderButton>
-            <CloseButton onClick={handleCloseModal}>Inchide</CloseButton>
-          </ModalButtonContainer>
-        </ModalContainer>
-      ) : null}
-    </Modal>
+          </DialogTitle1>
+          <DialogDetails>
+            <DialogLabel>Locatie:</DialogLabel>
+            <DialogValue>{selectedOrder.oras}</DialogValue>
+            <DialogLabel>Adresa:</DialogLabel>
+            <DialogValue>{selectedOrder.adresa}</DialogValue>
+            <DialogLabel>Ziua de livrare:</DialogLabel>
+            <DialogValue>{selectedOrder.intervalLivrare}</DialogValue>
+            <DialogLabel>Produse:</DialogLabel>
+            {/* <DialogValue> */}
+            <List>
+              {selectedOrder.produse.map((produs, index) => (
+                <ListItem key={index}>
+                  <ListItemText
+                    primary={`${produs.denumire} - ${produs.produseComanda.cantitate}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+            {/* </DialogValue> */}
+          </DialogDetails>
+          <DialogButtonContainer>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleTakeOrder(selectedOrder.id)}
+            >
+              Preia comanda
+            </Button>
+            <CloseButton color="secondary" onClick={handleCloseDialog}>
+              Inchide
+            </CloseButton>
+          </DialogButtonContainer>
+        </DialogContainer>
+      ) : (
+        <div>Comanda nu a putut fi gasita.</div>
+      )}
+    </Dialog>
   );
 };
 

@@ -16,7 +16,8 @@ import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
 import { Badge } from "@mui/material";
 import { GeneralContext } from "../context/GeneralContext";
 import { cosCumparaturi } from "../api";
-// import { GeneralContext } from "../context/GeneralContext";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 const pages = ["home", "admin", "curier"];
 const settings = ["Contul meu", "Deconectare"];
@@ -26,7 +27,7 @@ function NavBar(props) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   // const [currentPage, setCurrentPgae] = React.useState('')
-  const { produsAdaugatInCos, setProdusAdaugatInCos, logOut } =
+  const { produsAdaugatInCos, setProdusAdaugatInCos, logOut, setTheme, theme } =
     React.useContext(GeneralContext);
   let token = localStorage.getItem("token");
   if (token) {
@@ -45,7 +46,7 @@ function NavBar(props) {
     if (token) {
       setAnchorElUser(event.currentTarget);
     } else {
-      return navigate("login");
+      return navigate("/login");
     }
   };
 
@@ -69,13 +70,20 @@ function NavBar(props) {
       setProdusAdaugatInCos(0);
     }
   };
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
   React.useEffect(() => {
     bagdeCosCumparaturi();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <AppBar position="static" {...props}>
+    // <ThemeProvider theme={lightTheme}>
+    //   <CssBaseline />
+    <AppBar position="static" {...props} enableColorOnDark>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <DeliveryDiningIcon
@@ -223,17 +231,27 @@ function NavBar(props) {
                 size="large"
                 color="inherit"
                 edge="end"
-                onClick={() => navigate("/cos-cumparaturi", {replace: true})}
+                onClick={() => navigate("/cos-cumparaturi", { replace: true })}
               >
                 <Badge badgeContent={produsAdaugatInCos} color="error">
                   <ShoppingCartIcon />
                 </Badge>
+              </IconButton>
+              <IconButton
+                onClick={toggleTheme}
+                size="large"
+                color="inherit"
+                edge="end"
+                sx={{ ml: 1 }}
+              >
+                {theme === "light" ? <Brightness7Icon /> : <Brightness4Icon />}
               </IconButton>
             </Box>
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
+    // </ThemeProvider>
   );
 }
 export default NavBar;

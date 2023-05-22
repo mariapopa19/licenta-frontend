@@ -1,7 +1,6 @@
-import { Box, CssBaseline } from "@mui/material";
+import { Box, Pagination } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
-import { ThemeProvider } from "styled-components";
 // import { Item } from "../components/Item";
 import { GeneralContext } from "../context/GeneralContext";
 import Loading from "../layout/Loading";
@@ -12,10 +11,14 @@ import { useNavigate } from "react-router-dom";
 const Item = lazy(() => import("../components/Item"));
 
 export default function Home() {
-  // const produse = useLoaderData()
   const [produse, setProduse] = useState([]);
   const { produsAdaugatInCos, setProdusAdaugatInCos } =
     useContext(GeneralContext);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const numPages = Math.ceil(produse.length / itemsPerPage);
+
   let token = localStorage.getItem("token");
   if (token) {
     token = localStorage.getItem("token");
@@ -56,45 +59,66 @@ export default function Home() {
       });
     }
   };
+
   useEffect(() => {
     fetchProduse();
   }, []);
-  // localStorage.setItem('token', '')
-  const { theme } = useContext(GeneralContext);
-  // const theme1 = createTheme({
-  //   palette: { mode: theme },
-  // });
+ 
+
+  const handlePageChange = (event, newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const produsePaginaCurenta = produse.slice(startIndex, endIndex);
+
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <NavBar />
-      <Suspense fallback={<Loading />}>
-        <Box sx={{ p: 2 }} />
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid2
-            container
-            spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 4, sm: 8, md: 12 }}
-            direction={{ xs: "column", sm: "row", md: "row" }}
-            justifyContent="center"
-            alignItems="center"
-          >
-            {produse.map((produs, index) => (
-              <Grid2 item xs={2} sm={4} md={4} key={index}>
-                <Item
-                  id={produs.id}
-                  numeProdus={produs.denumire}
-                  pret={produs.pret}
-                  poza={produs.imageURL}
-                  adaugareInCos={handleAdaugaCos}
-                  vizualizareProdus={handleDetaliiProdus}
-                />
+    // <ThemeProvider theme={lightTheme}>
+    //   <CssBaseline />
+      <Grid2 container>
+        <Grid2 item md={12} sm={12} xs={12}>
+          <NavBar />
+        </Grid2>
+        <Grid2 item md={12} sm={12} xs={12}>
+          <Suspense fallback={<Loading />}>
+            <Box sx={{ flexGrow: 1, paddingTop: 5 }}>
+              <Grid2
+                container
+                spacing={{ xs: 2, md: 3 }}
+                columns={{ xs: 4, sm: 8, md: 12 }}
+                direction={{ xs: "column", sm: "row", md: "row" }}
+                justifyContent="center"
+                alignItems="center"
+              >
+                {produsePaginaCurenta.map((produs, index) => (
+                  <Grid2 item xs={2} sm={4} md={4} key={index}>
+                    <Item
+                      id={produs.id}
+                      numeProdus={produs.denumire}
+                      pret={produs.pret}
+                      poza={produs.imageURL}
+                      adaugareInCos={handleAdaugaCos}
+                      vizualizareProdus={handleDetaliiProdus}
+                    />
+                  </Grid2>
+                ))}
               </Grid2>
-            ))}
-          </Grid2>
-        </Box>
-      </Suspense>
-    </ThemeProvider>
+              <Box
+                sx={{ display: "flex", justifyContent: "center", marginTop: 5 }}
+              >
+                <Pagination
+                  count={numPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  color="primary"
+                />
+              </Box>
+            </Box>
+          </Suspense>
+        </Grid2>
+      </Grid2>
+    // </ThemeProvider>
   );
 }
 

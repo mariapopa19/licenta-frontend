@@ -1,8 +1,8 @@
 import { Grid, Typography } from "@mui/material";
-import AdminTableProduse from "../components/AdminTableProduse";
-import AdminTableFirme from "../components/AdminTableFirme";
-import AdminTableComenzi from "../components/AdmnTableComenzi";
-import AdminTableCategorii from "../components/AdminTableCategorii";
+import AdminTableProduse from "../components/AdminPage/AdminTableProduse";
+import AdminTableFirme from "../components/AdminPage/AdminTableFirme";
+import AdminTableComenzi from "../components/AdminPage/AdmnTableComenzi";
+import AdminTableCategorii from "../components/AdminPage/AdminTableCategorii";
 import NavBar from "../layout/NavBar";
 
 export default function Admin() {

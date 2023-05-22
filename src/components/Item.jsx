@@ -7,18 +7,11 @@ import {
   CardMedia,
   ThemeProvider,
   Typography,
-  createTheme,
 } from "@mui/material";
+import { useContext } from "react";
+import { GeneralContext } from "../context/GeneralContext";
 
-const theme = createTheme({
-  components: {
-    MuiCardActionArea: {
-      defaultProps: {
-        disableRipple: true,
-      },
-    },
-  },
-});
+;
 
 export default function Item({
   id,
@@ -28,6 +21,9 @@ export default function Item({
   adaugareInCos,
   vizualizareProdus,
 }) {
+
+  const {theme} = useContext(GeneralContext)
+  
   return (
     <ThemeProvider theme={theme}>
       <Card sx={{ margin: "auto", maxWidth: 300, flexGrow: 1 }}>

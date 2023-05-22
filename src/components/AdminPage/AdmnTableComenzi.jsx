@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { comandaAdmin, comenziAdmin, modificaComandaAdmin } from "../api";
+import { comandaAdmin, comenziAdmin, modificaComandaAdmin } from "../../api";
 
 const AdminTableComenzi = () => {
   const [data, setData] = useState([]);

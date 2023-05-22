@@ -7,23 +7,38 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Tooltip,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
-import { adaugaFirma, deleteFirma, firmeAdmin, modificaFirma } from "../api";
+import {
+  adaugaProdus,
+  categoriiAdmin,
+  deleteProdus,
+  firmeAdmin,
+  modificaProdus,
+  produseAdmin,
+} from "../../api";
 import { useConfirm } from "material-ui-confirm";
 
-const AdminTableFirme = () => {
+const AdminTableProduse = () => {
   const [data, setData] = useState([]);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [isError, setIsError] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+  const [firme, setFirme] = useState([]);
+  const [categorii, setCategorii] = useState([]);
 
   const confirm = useConfirm();
+
   const handleCreateNewRow = async (values) => {
+    console.log(values);
     console.log(
       values.denumire,
       values.pret,
@@ -33,10 +48,13 @@ const AdminTableFirme = () => {
       values.firma
     );
     try {
-      const res = await adaugaFirma(
+      const res = await adaugaProdus(
         values.denumire,
-        values.data_inceput,
-        values.data_finalizare
+        values.pret,
+        values.categorie,
+        values.descriere,
+        values.imageURL,
+        values.firma
       );
       console.log(res);
       data.push(res);
@@ -50,9 +68,17 @@ const AdminTableFirme = () => {
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     try {
       if (!Object.keys(validationErrors).length) {
+        console.log(values);
         data[row.index] = values;
-        await modificaFirma(values.id, values.denumire, values.data_finalizare);
-        fetchFirme()
+        const res = await modificaProdus(
+          values.id,
+          values.denumire,
+          values.pret,
+          values.descriere,
+          values.imageURL
+        );
+        //send/receive api updates here, then refetch or update local table data for re-render
+        setData([...res]);
         exitEditingMode(); //required to exit editing mode and close modal
       }
     } catch (error) {
@@ -71,7 +97,7 @@ const AdminTableFirme = () => {
         await confirm({
           description: `This will permanently delete ${row.original.denumire}.`,
         });
-        const res = await deleteFirma(row.original.id);
+        const res = await deleteProdus(row.original.id);
         data.splice(row.index, 1);
         setData([...res]);
       } catch (error) {
@@ -88,12 +114,9 @@ const AdminTableFirme = () => {
         error: !!validationErrors[cell.id],
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
-          let data_inceput;
           const isValid =
-            cell.column.id === "data_inceput"
-              ? (data_inceput = event.target.value)
-              : cell.column.id === "data_sfarsit"
-              ? validateDataSfarsit(event.target.value, data_inceput)
+            cell.column.id === "pret"
+              ? validatePret(+event.target.value)
               : validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
@@ -114,6 +137,13 @@ const AdminTableFirme = () => {
     [validationErrors]
   );
 
+  const dropDown = async () => {
+    const firme = await firmeAdmin();
+    setFirme(firme);
+    const categorii = await categoriiAdmin();
+    setCategorii(categorii);
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -125,41 +155,62 @@ const AdminTableFirme = () => {
       },
       {
         header: "Denumire",
-        accessorFn: (row) => row.denumire,
-        id: "denumire",
-        type: "text",
+        accessorKey: "denumire",
+        multiline: false,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
-          type: "text",
         }),
       },
       {
-        header: "Inceput Contract",
-        accessorKey: "perioadaContractFirma.data_inceput",
-        id: "data_inceput",
-        type: "date",
+        header: "Pret",
+        accessorKey: "pret",
+        multiline: false,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
-          type: "date",
-          disabled: true,
+          type: "number",
         }),
       },
       {
-        header: "Sfarsit Contract",
-        accessorKey: "perioadaContractFirma.data_finalizare",
-        id: "data_finalizare",
-        type: "date",
+        header: "Image URL",
+        accessorKey: "imageURL",
+        multiline: false,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
-          type: "date",
+          type: "url",
+        }),
+      },
+      {
+        header: "Descriere",
+        accessorKey: "descriere",
+        multiline: true,
+        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+          ...getCommonEditTextFieldProps(cell),
+          multiline: true,
+          maxRows: 4,
+        }),
+      },
+      {
+        header: "Categorie",
+        accessorKey: "categorieProdus.denumire",
+        id: "categorie",
+        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+          ...getCommonEditTextFieldProps(cell),
+        }),
+      },
+      {
+        header: "Firma",
+        accessorKey: "firma.denumire",
+        id: "firma",
+        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+          ...getCommonEditTextFieldProps(cell),
         }),
       },
     ],
     [getCommonEditTextFieldProps]
   );
-  const fetchFirme = async () => {
+  const fetchProduse = async () => {
     try {
-      const res = await firmeAdmin();
+      const res = await produseAdmin();
       // console.log(res);
       setData(res);
     } catch (error) {
@@ -171,7 +222,8 @@ const AdminTableFirme = () => {
   };
 
   useEffect(() => {
-    fetchFirme();
+    fetchProduse();
+    dropDown();
   }, []);
 
   return (
@@ -212,7 +264,7 @@ const AdminTableFirme = () => {
             onClick={() => setCreateModalOpen(true)}
             variant="contained"
           >
-            Adauga o firma noua
+            Creaza produs nou
           </Button>
         )}
         muiToolbarAlertBannerProps={
@@ -224,44 +276,43 @@ const AdminTableFirme = () => {
             : undefined
         }
       />
-      <CreateNewModal
+      <CreateNewProductModal
         columns={columns.slice(1)}
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
+        categorii={categorii}
+        firme={firme}
       />
     </>
   );
 };
-export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
+export const CreateNewProductModal = ({
+  open,
+  columns,
+  onClose,
+  onSubmit,
+  categorii,
+  firme,
+}) => {
   const [values, setValues] = useState(() =>
     columns.reduce((acc, column) => {
-      acc[column.accessorFn ?? ""] = "";
+      acc[column.accessorKey ?? ""] = "";
       return acc;
     }, {})
   );
+  const [firmaState, setFirmaState] = useState("");
+  const [categorieState, setCategorieState] = useState("");
 
-  const [isError, setIsError] = useState(false);
-  const [errorMessages, setErrorMessages] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    try {
-      if (values.data_sfarsit < values.data_inceput) {
-        throw Error;
-      }
-      onSubmit(values);
-      onClose();
-    } catch (err) {
-      setIsError(true);
-      setErrorMessages("Te rog introduce o data mai mare decat cea de inceput");
-    }
+  const handleSubmit = () => {
     //put your validation logic here
+    onSubmit(values);
+    onClose();
   };
 
   return (
     <Dialog open={open}>
-      <DialogTitle textAlign="center">Adauga o firma noua</DialogTitle>
+      <DialogTitle textAlign="center">Creaza produs nou</DialogTitle>
       <DialogContent>
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack
@@ -272,27 +323,67 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
               gap: "1.5rem",
             }}
           >
-            {columns.map((column) => (
-              <TextField
-                focused
-                error={isError}
-                helpperText={errorMessages}
-                type={column.type}
-                key={column.accessorKey || column.accessorFn}
-                label={column.header}
-                name={column.id}
-                onChange={(e) =>
-                  setValues({ ...values, [e.target.name]: e.target.value })
-                }
-              />
-            ))}
+            {columns.map((column) =>
+              column.id === "firma" ? (
+                <FormControl fullWidth>
+                  <InputLabel id="firma">Firma</InputLabel>
+                  <Select
+                    id="firma"
+                    label="Firma"
+                    name={column.id}
+                    value={firmaState}
+                    onChange={(e) => {
+                      setFirmaState(e.target.value);
+                      setValues({ ...values, [e.target.name]: e.target.value });
+                    }}
+                  >
+                    {firme.map((firma) => (
+                      <MenuItem value={firma.denumire}>
+                        {firma.denumire}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : column.id === "categorie" ? (
+                <FormControl fullWidth>
+                  <InputLabel id="categorie">Categorie</InputLabel>
+                  <Select
+                    id="categorie"
+                    label="Categorie"
+                    name={column.id}
+                    value={categorieState}
+                    onChange={(e) => {
+                      setCategorieState(e.target.value);
+                      setValues({ ...values, [e.target.name]: e.target.value });
+                    }}
+                  >
+                    {categorii.map((categorie) => (
+                      <MenuItem value={categorie.denumire}>
+                        {categorie.denumire}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : (
+                <TextField
+                  key={column.accessorKey}
+                  label={column.header}
+                  name={column.id}
+                  multiline={column.multiline}
+                  maxRows={4}
+                  onChange={(e) =>
+                    setValues({ ...values, [e.target.name]: e.target.value })
+                  }
+                />
+              )
+            )}
           </Stack>
         </form>
       </DialogContent>
       <DialogActions sx={{ p: "1.25rem" }}>
         <Button onClick={onClose}>Cancel</Button>
         <Button color="secondary" onClick={handleSubmit} variant="contained">
-          Creaza Firma Noua
+          Creaza Produs Nou
         </Button>
       </DialogActions>
     </Dialog>
@@ -300,7 +391,6 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
 };
 
 const validateRequired = (value) => !!value.length;
-const validateDataSfarsit = (data_sfarsit, data_inceput) =>
-  (data_sfarsit = data_inceput);
+const validatePret = (pret) => pret >= 1;
 
-export default AdminTableFirme;
+export default AdminTableProduse;

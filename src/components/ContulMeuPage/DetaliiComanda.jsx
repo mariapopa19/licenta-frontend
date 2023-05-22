@@ -73,7 +73,7 @@ const DetaliiComanda = () => {
     >
       <Typography
         variant="h4"
-        sx={{ fontWeight: "bold", marginBottom: "16px", color: "#212121" }}
+        sx={{ fontWeight: "bold", marginBottom: "16px" }}
       >
         Detalii comanda #{comandaId}
       </Typography>

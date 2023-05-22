@@ -15,11 +15,9 @@ const OrderContainer = styled(Paper)({
 const DetailsButton = styled(Button)({
   borderRadius: "50px",
   padding: "8px 16px",
-  borderColor: "#212121",
-  color: "#212121",
   fontWeight: "bold",
   "&:hover": {
-    backgroundColor: "#212121",
+    backgroundColor: "#c2185b",
     color: "#FFFFFF",
   },
 });

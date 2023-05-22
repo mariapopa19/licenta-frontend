@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
-import { adaugaCategorie, categoriiAdmin, deleteCategorie, modificaCategorie } from "../api";
+import { adaugaCategorie, categoriiAdmin, deleteCategorie, modificaCategorie } from "../../api";
 import { useConfirm } from "material-ui-confirm";
 
 const AdminTableCategorii = () => {
