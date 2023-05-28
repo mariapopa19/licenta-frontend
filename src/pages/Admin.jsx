@@ -3,6 +3,7 @@ import AdminTableProduse from "../components/AdminPage/AdminTableProduse";
 import AdminTableFirme from "../components/AdminPage/AdminTableFirme";
 import AdminTableComenzi from "../components/AdminPage/AdmnTableComenzi";
 import AdminTableCategorii from "../components/AdminPage/AdminTableCategorii";
+import AdminTableUsers from "../components/AdminPage/AdminTableUsers";
 import NavBar from "../layout/NavBar";
 
 export default function Admin() {
@@ -10,6 +11,16 @@ export default function Admin() {
     <Grid container justifyContent="center" alignItems="center" rowSpacing={6}>
       <Grid item md={12} sm={12} xs={12}>
         <NavBar />
+      </Grid>
+      <Grid item xs={12} sm={10} md={10} container rowSpacing={3}>
+        <Grid item md>
+          <Typography variant="h5" sx={{ fontWeight: "bold", width: {lg: '1200px', md: '900px', sm: '600px', xs: '0px'} }}>
+            Utilizatori
+          </Typography>
+        </Grid>
+        <Grid item xs sm md>
+          <AdminTableUsers />
+        </Grid>
       </Grid>
       <Grid item xs={12} sm={10} md={10} container rowSpacing={3}>
         <Grid item md>

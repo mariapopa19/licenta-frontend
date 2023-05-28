@@ -9,13 +9,21 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Stack,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import { cardPayment, cosCumparaturi, judeteRomania } from "../api";
+import { cardPayment, cosCumparaturi, judeteRomaniaLocal } from "../api";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../layout/NavBar";
 import StepperComponent from "../layout/Stepper";
 import Loading from "../layout/Loading";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import "dayjs/locale/ro";
+import { MobileTimePicker } from "@mui/x-date-pickers";
+// import { StaticTimePicker } from "formik-mui-lab";
 
 const CheckoutFormField = styled(TextField)({
   marginBottom: "1rem",
@@ -26,16 +34,21 @@ const Total = styled(Typography)({
   fontWeight: "bold",
 });
 
+
+// !!! Cand vrei sa faci plata sa nu uiti sa dechizi terminalul cu ruta pentru webhook 'stripe listen --forward-to localhost:4000/shop/webhook'
+
+
 const DetaliiComandaCheckout = () => {
-  const [city, setCity] = useState("");
-  const [address, setAddress] = useState("");
-  const [county, setCounty] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [oras, setOras] = useState("");
+  const [adresa, setAdresa] = useState("");
+  const [judet, setJudet] = useState("");
+  const [timpulSelectat, setTimpulSelectat] = useState(dayjs().locale("ro"));
+  const [dataSelectata, setDataSelectata] = useState(dayjs().locale("ro"));
   const [total, setTotal] = useState(0);
   const [produse, setProduse] = useState([]);
   const navigate = useNavigate();
-  const [countries, setCountries] = useState([]);
+  const [judete, setJudete] = useState([]);
+  const [orase, setOrase] = useState([]);
 
   let token = localStorage.getItem("token");
   if (token) {
@@ -46,8 +59,8 @@ const DetaliiComandaCheckout = () => {
 
   const fetchJudeteRomania = async () => {
     try {
-      const res = await judeteRomania();
-      setCountries(res);
+      const res = await judeteRomaniaLocal();
+      setJudete(res);
     } catch (e) {
       e.message === "jwt expired" || e.message === "jwt malformed"
         ? navigate("/login")
@@ -71,24 +84,42 @@ const DetaliiComandaCheckout = () => {
           : console.log(e.message);
       }
     } else {
-      navigate("/login", { replace: true });
+      navigate("/login");
       // ! eroare aici, de rezolvat
+    }
+  };
+
+  const handleJudetSelectat = (e) => {
+    try {
+      setJudet(e.target.value);
+      const judetSelectat = judete.find(
+        (judet) => e.target.value === judet.nume
+      );
+      setOrase(judetSelectat.localitati);
+    } catch (e) {
+      e.message === "jwt expired" || e.message === "jwt malformed"
+        ? navigate("/login")
+        : console.log(e.message);
     }
   };
 
   const handleFinalizeazaComanda = async () => {
     if (token) {
       try {
-        const res = await cardPayment(
-          token,
-          address,
-          city,
-          county,
-          selectedDate,
-          selectedTime
-        );
-        if (res.url) {
-          window.location.href = res.url;
+        if (adresa && oras && judet && dataSelectata && timpulSelectat) {
+          const res = await cardPayment(
+            token,
+            adresa,
+            oras,
+            judet,
+            dataSelectata.format("DD/MM/YYYY"),
+            timpulSelectat.format("H:mm")
+          );
+          if (res.url) {
+            window.location.href = res.url;
+          }
+        } else {
+          alert("Nu ai completat toate datele!");
         }
       } catch (e) {
         e.message === "jwt expired" || e.message === "jwt malformed"
@@ -110,7 +141,7 @@ const DetaliiComandaCheckout = () => {
       <Grid item md={12} sm={12} xs={12}>
         <NavBar />
       </Grid>
-      <Grid item md={12} sm={12} xs={12} >
+      <Grid item md={12} sm={12} xs={12}>
         <StepperComponent />
       </Grid>
       <Grid item container sx={{ flexGrow: 1, mx: 10 }}>
@@ -140,55 +171,60 @@ const DetaliiComandaCheckout = () => {
             px: 5,
           }}
         >
-          <CheckoutFormField
-            label="Oraș"
-            variant="outlined"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-          />
-          <CheckoutFormField
-            label="Adresă"
-            variant="outlined"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
           <FormControl>
             <InputLabel id="jud">Județ</InputLabel>
             <Select
               labelId="jud"
               sx={{ marginBottom: "1rem", width: 500 }}
-              value={county}
+              value={judet}
               label="Județ"
-              onChange={(e) => setCounty(e.target.value)}
+              onChange={handleJudetSelectat}
             >
-              {countries.map((county, index) => (
-                <MenuItem key={index} value={county.nume}>
+              {judete.map((county, index) => (
+                <MenuItem key={index} value={county.nume} name={county.nume}>
                   {county.nume}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+          <FormControl>
+            <InputLabel id="oras">Oraș</InputLabel>
+            <Select
+              labelId="oras"
+              sx={{ marginBottom: "1rem", width: 500 }}
+              value={oras}
+              label="Oraș"
+              onChange={(e) => setOras(e.target.value)}
+            >
+              {orase.map((oras, index) => (
+                <MenuItem key={index} value={oras.nume}>
+                  {oras.nume}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <CheckoutFormField
-            select
-            label="Oră"
+            label="Adresă"
             variant="outlined"
-            value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
-          >
-            <MenuItem value="9:00">9:00</MenuItem>
-            <MenuItem value="12:00">12:00</MenuItem>
-            <MenuItem value="15:00">15:00</MenuItem>
-          </CheckoutFormField>
-          <CheckoutFormField
-            type="date"
-            label="Data"
-            variant="outlined"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            value={adresa}
+            onChange={(e) => setAdresa(e.target.value)}
           />
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ro">
+            <Stack spacing={2} width={500}>
+              <DatePicker
+                label="Data"
+                value={dataSelectata}
+                disablePast
+                onChange={(e) => setDataSelectata(e)}
+              />
+              <MobileTimePicker
+                disableOpenPicker={false}
+                label="Ora"
+                value={timpulSelectat}
+                onChange={(e) => setTimpulSelectat(e)}
+              />
+            </Stack>
+          </LocalizationProvider>
         </Grid>
         <Grid item xs={12} md={4}>
           <Typography variant="h4" component="h2" gutterBottom>
@@ -220,7 +256,7 @@ const DetaliiComandaCheckout = () => {
                 onClick={() => handleFinalizeazaComanda()}
                 variant="contained"
                 size="large"
-                //   fullWidth
+                type="submit"
               >
                 Finalizare comandă
               </Button>

@@ -30,6 +30,7 @@ import DetaliiComandaCheckout from "./pages/DetaliiComanda";
 import ParolaUitata from "./pages/ParolaUitata";
 import ConfirmationPage from "./pages/ConfirmareEmailTrimis";
 import SchimbareParola from "./pages/SchimbareParola";
+import Test from "./pages/test";
 const Home = lazy(() => import("./pages/Home"));
 
 const router = createBrowserRouter(
@@ -79,6 +80,7 @@ const router = createBrowserRouter(
         element={<Curier />}
         errorElement={<ErrorPage />}
       />
+      <Route path="/test" element={<Test />} />
     </Route>
   )
 );

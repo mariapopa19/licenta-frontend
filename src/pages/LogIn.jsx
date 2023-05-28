@@ -80,7 +80,6 @@ export default function LogIn() {
     try {
       const res = await login(email, pass);
       if (res.token) {
-        console.log(res);
         setToken(res.token);
         setUserId(res.userId);
         if (checked) {

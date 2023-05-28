@@ -26,23 +26,22 @@ const CheckoutSuccess = () => {
   return (
     <Grid container>
       <Grid item md={12} sm={12} xs={12}>
-      <NavBar />
+        <NavBar />
       </Grid>
       <Grid item md={12} sm={12} xs={12}>
         <StepperComponent />
       </Grid>
       <Grid item md={12} sm={12} xs={12}>
-      
-      <CheckoutSuccessContainer>
-        <CheckoutSuccessIcon />
-        <CheckoutSuccessMessage variant="h4">
-          Comanda ta a fost plasată cu succes!
-        </CheckoutSuccessMessage>
-        <Typography variant="body1">
-          Mulțumim pentru comandă. Aceasta a fost plasată și va fi procesată în
-          cel mai scurt timp posibil.
-        </Typography>
-      </CheckoutSuccessContainer>
+        <CheckoutSuccessContainer>
+          <CheckoutSuccessIcon />
+          <CheckoutSuccessMessage variant="h4">
+            Comanda ta a fost plasată cu succes!
+          </CheckoutSuccessMessage>
+          <Typography variant="body1">
+            Mulțumim pentru comandă. Aceasta a fost plasată și va fi procesată
+            în cel mai scurt timp posibil.
+          </Typography>
+        </CheckoutSuccessContainer>
       </Grid>
     </Grid>
   );

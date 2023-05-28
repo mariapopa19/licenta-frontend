@@ -53,7 +53,7 @@ export const schimbaParolaPas2 = async (token, parola) => {
   } catch (e) {
     throw Error(e.response.data.message);
   }
-}
+};
 
 export const produseAdmin = async () => {
   try {
@@ -241,6 +241,52 @@ export const deleteCategorie = async (categorieId) => {
   }
 };
 
+export const utilizatoriAdmin = async () => {
+  try {
+    const res = await axios.get(generateURL("admin/utilizatori"));
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+};
+
+export const creazaUtilizatorAdmin = async (email, parola, nume, admin, curier) => {
+  try {
+    const res = await axios.post(generateURL("admin/utilizator"), {
+      email: email,
+      parola: parola,
+      nume: nume,
+      curier: curier,
+      admin: admin,
+    });
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+};
+
+export const actualizareUtilizator = async (userId, email, nume) => {
+  try {
+    const res = await axios.patch(generateURL(`admin/utilizator/${userId}`), {
+      email: email,
+      nume: nume,
+    });
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+};
+
+export const stergereUtilizator = async (userId) => {
+  try {
+    const res = await axios.delete(generateURL(`admin/utilizator/${userId}`));
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+};
+
+// * Pagina de Home
 export const produseShop = async () => {
   try {
     const res = await axios.get(generateURL("shop/produse"));
@@ -259,11 +305,9 @@ export const produsShop = async (produsId) => {
   }
 };
 
-
 // * Cos de cumparaturi
 export const cosCumparaturi = async (token) => {
   try {
-    console.log(token);
     const res = await axios.get(generateURL(`shop/cos-cumparaturi/${token}`));
     return res.data.produseCos;
   } catch (e) {
@@ -306,25 +350,31 @@ export const stergeProdusCos = async (token, produsId) => {
   }
 };
 
-// ! plata cu cardul 
-export const cardPayment = async (token, adresa, oras, judet, ziLivrare, oraLivrare) => {
-  try{
-    const res = await axios.post(generateURL('shop/create-checkout-session'), {
+// ! plata cu cardul
+export const cardPayment = async (
+  token,
+  adresa,
+  oras,
+  judet,
+  ziLivrare,
+  oraLivrare
+) => {
+  try {
+    const res = await axios.post(generateURL("shop/create-checkout-session"), {
       token: token,
       adresa: adresa,
       oras: oras,
       judet: judet,
       ziLivrare: ziLivrare,
-      oraLivrare: oraLivrare
-    })
+      oraLivrare: oraLivrare,
+    });
     return res.data;
-  }catch (e) {
+  } catch (e) {
     throw Error(e.response.data.message);
   }
-}
+};
 
-
-// * Pagina cu detaliile personale 
+// * Pagina cu detaliile personale
 export const comenziShop = async (token) => {
   try {
     const res = await axios.get(generateURL(`shop/comenzi/${token}`));
@@ -375,43 +425,45 @@ export const comenziShip = async (token, oras) => {
   }
 };
 
-export const comandaShip = async(token, comandaId) => {
+export const comandaShip = async (token, comandaId) => {
   try {
-    const res = await axios.get(generateURL(`ship/comanda/${token}/${comandaId}`));
+    const res = await axios.get(
+      generateURL(`ship/comanda/${token}/${comandaId}`)
+    );
     return res.data.comanda;
   } catch (e) {
     throw Error(e.response.data.message);
   }
-}
+};
 
 export const preiaComanda = async (token, comandaId) => {
   try {
-    const res = await axios.post(generateURL('ship/comanda'), {
+    const res = await axios.post(generateURL("ship/comanda"), {
       token: token,
-      comandaId: comandaId
+      comandaId: comandaId,
     });
     return res.data.comanda;
   } catch (e) {
     throw Error(e.response.data.message);
   }
-}
+};
 
 export const comandaFinalizataShipper = async (token, comandaId) => {
   try {
-    const res = await axios.post(generateURL('ship/comanda-finalizata'), {
+    const res = await axios.post(generateURL("ship/comanda-finalizata"), {
       token: token,
-      comandaId: comandaId
+      comandaId: comandaId,
     });
     return res.data.comanda;
   } catch (e) {
     throw Error(e.response.data.message);
   }
-}
+};
 
-export const judeteRomania = async () => {
+export const judeteRomaniaLocal = async () => {
   try {
-    const res = await axios.get('https://roloca.coldfuse.io/judete');
-    return res.data;
+    const res = await axios.get("./judete.json");
+    return res.data.judete;
   } catch (e) {
     throw Error(e.response.data.message);
   }

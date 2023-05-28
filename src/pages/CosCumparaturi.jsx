@@ -51,7 +51,6 @@ const CosCumparaturi = () => {
   const fetchProduseCosCumparaturi = async () => {
     if (token) {
       try {
-        console.log(token);
         const res = await cosCumparaturi(token);
         const totalInitial = res.reduce(
           (acc, curr) => acc + curr.pret * curr.produsCosCumparaturi.cantitate,

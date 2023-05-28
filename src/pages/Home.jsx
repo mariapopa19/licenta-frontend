@@ -49,7 +49,6 @@ export default function Home() {
   const fetchProduse = async () => {
     try {
       const res = await produseShop();
-      console.log(res);
       setProduse(res.produse);
     } catch (e) {
       console.log(e);
@@ -125,7 +124,6 @@ export default function Home() {
 export const loaderProduse = async () => {
   try {
     const res = await produseShop();
-    console.log(res);
     return res;
   } catch (e) {
     console.log(e);
