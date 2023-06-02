@@ -31,6 +31,7 @@ import ParolaUitata from "./pages/ParolaUitata";
 import ConfirmationPage from "./pages/ConfirmareEmailTrimis";
 import SchimbareParola from "./pages/SchimbareParola";
 import Test from "./pages/test";
+import CurierCoamndaPreluata from "./pages/CurierComandaPreluata";
 const Home = lazy(() => import("./pages/Home"));
 
 const router = createBrowserRouter(
@@ -51,7 +52,7 @@ const router = createBrowserRouter(
       <Route path="/parola-uitata" element={<ParolaUitata />} />
       <Route path="/email-trimis" element={<ConfirmationPage />} />
       <Route path="/resetare-parola/:token" element={<SchimbareParola />} />
-      
+
       <Route path="/signup" element={<SignUp />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/cos-cumparaturi" element={<CosCumparaturi />} />
@@ -80,6 +81,7 @@ const router = createBrowserRouter(
         element={<Curier />}
         errorElement={<ErrorPage />}
       />
+      <Route path="/curier/:comandaId" element={<CurierCoamndaPreluata />} />
       <Route path="/test" element={<Test />} />
     </Route>
   )

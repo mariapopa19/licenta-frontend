@@ -62,11 +62,22 @@ const GeneralProvider = (props) => {
   const [userId, setUserId] = useState("");
   const [produsAdaugatInCos, setProdusAdaugatInCos] = useState(0);
   const [theme, setTheme] = useState("light");
+  const [userRoles, setUserRoles] = useState({
+    admin: false,
+    curier: false,
+  });
+
   const navigate = useNavigate();
 
   const logOut = async () => {
     localStorage.clear();
     sessionStorage.clear();
+    setProdusAdaugatInCos(0);
+    setUserRoles({
+      ...userRoles,
+      admin: false,
+      curier: false,
+    });
     setToken("");
     setUserId("");
     navigate("/");
@@ -86,6 +97,8 @@ const GeneralProvider = (props) => {
         setUserId,
         produsAdaugatInCos,
         setProdusAdaugatInCos,
+        userRoles,
+        setUserRoles,
       }}
     >
       <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>

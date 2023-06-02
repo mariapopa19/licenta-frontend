@@ -100,15 +100,12 @@ const AdminTableUsers = () => {
         error: !!validationErrors[cell.id],
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
-          const isValid =
-            cell.column.id === "pret"
-              ? validatePret(+event.target.value)
-              : validateRequired(event.target.value);
+          const isValid = validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
             setValidationErrors({
               ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
+              [cell.id]: `${cell.column.columnDef.header} este obligatoriu`,
             });
           } else {
             //remove validation error for cell if valid
@@ -186,6 +183,11 @@ const AdminTableUsers = () => {
     setIsError(false);
   };
 
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
+
   useEffect(() => {
     fetchUtilizatori();
   }, []);
@@ -201,6 +203,9 @@ const AdminTableUsers = () => {
             size: 120,
           },
         }}
+        initialState={{ columnVisibility: { parola: false } }}
+        onPaginationChange={setPagination}
+        state={{ pagination }}
         editingMode="modal" //default
         enableColumnOrdering
         enableEditing
@@ -413,6 +418,5 @@ export const CreateNewProductModal = ({ open, columns, onClose, onSubmit }) => {
 };
 
 const validateRequired = (value) => !!value.length;
-const validatePret = (pret) => pret >= 1;
 
 export default AdminTableUsers;

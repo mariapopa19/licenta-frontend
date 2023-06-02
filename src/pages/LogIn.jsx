@@ -70,7 +70,7 @@ export default function LogIn() {
   const [typeErrorParola, setTypeErrorParola] = useState(false);
   const [typeErrorEmail, setTypeErrorEmail] = useState(false);
   const [checked, setChecked] = useState(false);
-  const { token, setToken, setUserId } = useContext(GeneralContext);
+  const { token, setToken } = useContext(GeneralContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -81,7 +81,6 @@ export default function LogIn() {
       const res = await login(email, pass);
       if (res.token) {
         setToken(res.token);
-        setUserId(res.userId);
         if (checked) {
           localStorage.setItem("token", res.token);
         } else {

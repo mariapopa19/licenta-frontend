@@ -15,19 +15,17 @@ import { useNavigate } from "react-router-dom";
 import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
 import { Badge } from "@mui/material";
 import { GeneralContext } from "../context/GeneralContext";
-import { cosCumparaturi } from "../api";
+import { cosCumparaturi, roluriUtilizator } from "../api";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 
-const pages = ["home", "admin", "curier"];
 const settings = ["Contul meu", "Deconectare"];
 
 function NavBar(props) {
-  // const { token } = React.useContext(GeneralContext);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  // const [currentPage, setCurrentPgae] = React.useState('')
-  const { produsAdaugatInCos, setProdusAdaugatInCos, logOut, setTheme, theme } =
+
+  const { produsAdaugatInCos, setProdusAdaugatInCos, logOut, setTheme, theme,userRoles, setUserRoles } =
     React.useContext(GeneralContext);
   let token = localStorage.getItem("token");
   if (token) {
@@ -35,11 +33,9 @@ function NavBar(props) {
   } else {
     token = sessionStorage.getItem("token");
   }
-  // const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
-    console.log(event.currentTarget);
     setAnchorElNav(event.currentTarget);
   };
   const handleOpenUserMenu = (event) => {
@@ -51,8 +47,9 @@ function NavBar(props) {
   };
 
   const handleCloseNavMenu = (value) => {
-    console.log(value);
-    value === "home" ? navigate("/") : navigate(`/${value}`);
+    if (value === "home" || value === "admin" || value === "curier") {
+      value === "home" ? navigate("/") : navigate(`/${value}`);
+    }
     setAnchorElNav(null);
   };
 
@@ -71,18 +68,26 @@ function NavBar(props) {
     }
   };
 
+  const paginiDisponibile = async () => {
+    if (token) {
+      const res = await roluriUtilizator(token);
+      setUserRoles({
+        admin: res.admin,
+        curier: res.curier,
+      });
+    } 
+  };
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
 
   React.useEffect(() => {
     bagdeCosCumparaturi();
+    paginiDisponibile()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    // <ThemeProvider theme={lightTheme}>
-    //   <CssBaseline />
     <AppBar position="static" {...props} enableColorOnDark>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -136,9 +141,22 @@ function NavBar(props) {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
+              <MenuItem
+                key="home"
+                onClick={(event) => {
+                  handleCloseNavMenu(event.target.textContent);
+                }}
+              >
+                <Typography
+                  textAlign="center"
+                  sx={{ textTransform: "capitalize" }}
+                >
+                  home
+                </Typography>
+              </MenuItem>
+              {userRoles.admin ? (
                 <MenuItem
-                  key={page}
+                  key="admin"
                   onClick={(event) => {
                     handleCloseNavMenu(event.target.textContent);
                   }}
@@ -147,10 +165,25 @@ function NavBar(props) {
                     textAlign="center"
                     sx={{ textTransform: "capitalize" }}
                   >
-                    {page}
+                    admin
                   </Typography>
                 </MenuItem>
-              ))}
+              ) : null}
+              {userRoles.curier ? (
+                <MenuItem
+                  key="curier"
+                  onClick={(event) => {
+                    handleCloseNavMenu(event.target.textContent);
+                  }}
+                >
+                  <Typography
+                    textAlign="center"
+                    sx={{ textTransform: "capitalize" }}
+                  >
+                    curier
+                  </Typography>
+                </MenuItem>
+              ) : null}
             </Menu>
           </Box>
           <DeliveryDiningIcon
@@ -176,17 +209,37 @@ function NavBar(props) {
             Gifty
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
+            <Button
+              key="home"
+              onClick={(event) => {
+                handleCloseNavMenu(event.target.textContent);
+              }}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              home
+            </Button>
+            {userRoles.admin ? (
               <Button
-                key={page}
+                key="admin"
                 onClick={(event) => {
                   handleCloseNavMenu(event.target.textContent);
                 }}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                admin
               </Button>
-            ))}
+            ) : null}
+            {userRoles.curier ? (
+              <Button
+                key="curier"
+                onClick={(event) => {
+                  handleCloseNavMenu(event.target.textContent);
+                }}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                curier
+              </Button>
+            ) : null}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
@@ -251,7 +304,6 @@ function NavBar(props) {
         </Toolbar>
       </Container>
     </AppBar>
-    // </ThemeProvider>
   );
 }
 export default NavBar;

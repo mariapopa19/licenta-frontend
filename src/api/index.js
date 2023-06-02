@@ -55,6 +55,15 @@ export const schimbaParolaPas2 = async (token, parola) => {
   }
 };
 
+export const roluriUtilizator = async (token) => {
+  try {
+    const res = await axios.get(generateURL(`auth/roluri/${token}`));
+    return res.data;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+}
+
 export const produseAdmin = async () => {
   try {
     const res = await axios.get(generateURL("admin/produse"));
@@ -416,7 +425,16 @@ export const modificaDetaliiUtilizaor = async (token, nume, email) => {
   }
 };
 
-export const comenziShip = async (token, oras) => {
+export const comenziShip = async (token) => {
+  try {
+    const res = await axios.get(generateURL(`ship/comenzi/${token}`));
+    return res.data.result;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+};
+
+export const comenziShipDupaOras = async (token, oras) => {
   try {
     const res = await axios.get(generateURL(`ship/comenzi/${token}/${oras}`));
     return res.data.comenzi;

@@ -126,6 +126,11 @@ const AdminTableCategorii = () => {
     }
     setIsError(false);
   };
+  
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 5, 
+  });
 
   useEffect(() => {
     fetchCatgorii();
@@ -142,6 +147,8 @@ const AdminTableCategorii = () => {
             size: 120,
           },
         }}
+        onPaginationChange={setPagination} 
+        state={{ pagination }}
         editingMode="modal" //default
         enableColumnOrdering
         enableEditing

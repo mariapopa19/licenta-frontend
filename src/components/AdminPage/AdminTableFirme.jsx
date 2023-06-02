@@ -52,7 +52,7 @@ const AdminTableFirme = () => {
       if (!Object.keys(validationErrors).length) {
         data[row.index] = values;
         await modificaFirma(values.id, values.denumire, values.data_finalizare);
-        fetchFirme()
+        fetchFirme();
         exitEditingMode(); //required to exit editing mode and close modal
       }
     } catch (error) {
@@ -99,7 +99,7 @@ const AdminTableFirme = () => {
             //set validation error for cell if invalid
             setValidationErrors({
               ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
+              [cell.id]: `${cell.column.columnDef.header} este obligatoriu`,
             });
           } else {
             //remove validation error for cell if valid
@@ -170,6 +170,11 @@ const AdminTableFirme = () => {
     setIsError(false);
   };
 
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
+
   useEffect(() => {
     fetchFirme();
   }, []);
@@ -185,6 +190,8 @@ const AdminTableFirme = () => {
             size: 120,
           },
         }}
+        onPaginationChange={setPagination}
+        state={{ pagination }}
         editingMode="modal" //default
         enableColumnOrdering
         enableEditing
@@ -301,6 +308,6 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
 
 const validateRequired = (value) => !!value.length;
 const validateDataSfarsit = (data_sfarsit, data_inceput) =>
-  (data_sfarsit = data_inceput);
+  (data_sfarsit = data_inceput || data_sfarsit < data_inceput);
 
 export default AdminTableFirme;

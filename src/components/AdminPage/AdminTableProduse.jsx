@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import MaterialReactTable from "material-react-table";
 import {
@@ -117,13 +118,25 @@ const AdminTableProduse = () => {
           const isValid =
             cell.column.id === "pret"
               ? validatePret(+event.target.value)
+              : cell.column.id === "imageURL"
+              ? validateURL(event.target.value)
               : validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
-            setValidationErrors({
-              ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
-            });
+            cell.column.id === "pret"
+              ? setValidationErrors({
+                  ...validationErrors,
+                  [cell.id]: `${cell.column.columnDef.header} trebuie sa fie mai mare decat 1`,
+                })
+              : cell.column.id === "imageURL"
+              ? setValidationErrors({
+                  ...validationErrors,
+                  [cell.id]: `${cell.column.columnDef.header} trebuie sa fie URL`,
+                })
+              : setValidationErrors({
+                  ...validationErrors,
+                  [cell.id]: `${cell.column.columnDef.header} este obligatoriu`,
+                });
           } else {
             //remove validation error for cell if valid
             delete validationErrors[cell.id];
@@ -195,6 +208,7 @@ const AdminTableProduse = () => {
         id: "categorie",
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
+          disabled: true,
         }),
       },
       {
@@ -203,6 +217,7 @@ const AdminTableProduse = () => {
         id: "firma",
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
+          disabled: true,
         }),
       },
     ],
@@ -221,6 +236,11 @@ const AdminTableProduse = () => {
     setIsError(false);
   };
 
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
+
   useEffect(() => {
     fetchProduse();
     dropDown();
@@ -237,6 +257,8 @@ const AdminTableProduse = () => {
             size: 120,
           },
         }}
+        onPaginationChange={setPagination}
+        state={{ pagination }}
         editingMode="modal" //default
         enableColumnOrdering
         enableEditing
@@ -392,5 +414,9 @@ export const CreateNewProductModal = ({
 
 const validateRequired = (value) => !!value.length;
 const validatePret = (pret) => pret >= 1;
+const validateURL = (imageURL) =>
+  imageURL.match(
+    /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+  );
 
 export default AdminTableProduse;

@@ -13,7 +13,7 @@ import {
 import NavBar from "../layout/NavBar";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { comandaShip, comenziShip } from "../api";
+import { comandaShip, comenziShip, comenziShipDupaOras, preiaComanda } from "../api";
 import { redirect, useNavigate } from "react-router-dom";
 
 const PageContainer = styled("div")({
@@ -44,7 +44,7 @@ const OrderItem = styled(ListItem)({
   display: "flex",
   justifyContent: "space-between",
   border: "2px solid",
-  borderRadius: '10px',
+  borderRadius: "10px",
   padding: 16,
   marginBottom: 16,
 });
@@ -104,7 +104,7 @@ const CloseButton = styled(Button)({
 });
 
 const Curier = () => {
-  const [searchText, setSearchText] = useState("Mangalia");
+  const [searchText, setSearchText] = useState("");
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState({ produse: [] });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -120,8 +120,7 @@ const Curier = () => {
   const fetchComenzi = async () => {
     if (token) {
       try {
-        const res = await comenziShip(token, searchText);
-        console.log(res);
+        const res = await comenziShip(token);
         setOrders(res);
       } catch (e) {
         e.message === "jwt expired" || e.message === "jwt malformed"
@@ -133,13 +132,41 @@ const Curier = () => {
     }
   };
 
-  const handleSearch = (event) => {
+  const onBlurSearch = async (event) => {
+    if (searchText) {
+      try {
+        const res = await comenziShipDupaOras(token, searchText);
+        setOrders(res);
+      } catch (e) {
+        e.message === "jwt expired" || e.message === "jwt malformed"
+          ? navigate("/login")
+          : console.log(e.message);
+      }
+    } else {
+      try {
+        const res = await comenziShip(token);
+        setOrders(res);
+      } catch (e) {
+        e.message === "jwt expired" || e.message === "jwt malformed"
+          ? navigate("/login")
+          : console.log(e.message);
+      }
+    }
+  };
+
+  const handleSearch = async (event) => {
     setSearchText(event.target.value);
   };
 
-  const handleTakeOrder = (orderId) => {
-    // aici ar trebui să adaugi logica pentru a prelua comanda cu id-ul orderId
-    console.log(`Ai preluat comanda cu id-ul ${orderId}.`);
+  const handleTakeOrder = async (orderId) => {
+    try {
+      await preiaComanda(token, orderId)
+      navigate(`${orderId}`)
+    } catch (e) {
+      e.message === "jwt expired" || e.message === "jwt malformed"
+        ? navigate("/login")
+        : console.log(e.message);
+    }
   };
 
   const handleOrderClick = async (comandaId) => {
@@ -182,6 +209,7 @@ const Curier = () => {
             label="Cauta dupa locatia comenzii"
             variant="outlined"
             value={searchText}
+            onBlur={onBlurSearch}
             onChange={handleSearch}
           />
           <OrdersList>
@@ -232,7 +260,6 @@ export const DialogDetaliiComanda = ({
   selectedOrder,
   handleTakeOrder,
 }) => {
-  console.log(selectedOrder);
   return (
     <Dialog open={open} onClose={handleCloseDialog}>
       {selectedOrder ? (
@@ -292,7 +319,7 @@ export const loaderCurier = async () => {
 
   if (token) {
     try {
-      const res = await comenziShip(token, "Mangalia");
+      const res = await comenziShip(token);
       return res;
     } catch (e) {
       e.message === "jwt expired" || e.message === "jwt malformed"

@@ -67,16 +67,18 @@ const AdminTableComenzi = () => {
         error: !!validationErrors[cell.id],
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
-          const isValid =
-            cell.column.id === "pret"
-              ? validatePret(+event.target.value)
-              : validateRequired(event.target.value);
+          const isValid = validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
-            setValidationErrors({
-              ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
-            });
+            cell.column.id === "pret"
+              ? setValidationErrors({
+                  ...validationErrors,
+                  [cell.id]: `${cell.column.columnDef.header} trebuie sa fie mai mare decat 1`,
+                })
+              : setValidationErrors({
+                  ...validationErrors,
+                  [cell.id]: `${cell.column.columnDef.header} este obligatoriu`,
+                });
           } else {
             //remove validation error for cell if valid
             delete validationErrors[cell.id];
@@ -135,6 +137,7 @@ const AdminTableComenzi = () => {
         accessorKey: "ziLivrare",
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
+          type: "date",
         }),
       },
       {
@@ -142,7 +145,7 @@ const AdminTableComenzi = () => {
         accessorKey: "intervalLivrare",
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
-          type: 'time'
+          type: "time",
         }),
       },
       {
@@ -169,6 +172,11 @@ const AdminTableComenzi = () => {
     setIsError(false);
   };
 
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
+
   useEffect(() => {
     fetchComenzi();
   }, []);
@@ -184,6 +192,8 @@ const AdminTableComenzi = () => {
             size: 120,
           },
         }}
+        onPaginationChange={setPagination}
+        state={{ pagination }}
         editingMode="modal" //default
         enableColumnOrdering
         enableEditing
@@ -261,6 +271,5 @@ export const CreateNewModal = ({ open, produse, onClose }) => {
 };
 
 const validateRequired = (value) => !!value.length;
-const validatePret = (pret) => pret >= 1;
 
 export default AdminTableComenzi;
