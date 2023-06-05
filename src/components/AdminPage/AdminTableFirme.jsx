@@ -15,6 +15,9 @@ import {
 import { Delete, Edit } from "@mui/icons-material";
 import { adaugaFirma, deleteFirma, firmeAdmin, modificaFirma } from "../../api";
 import { useConfirm } from "material-ui-confirm";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import dayjs from "dayjs";
 
 const AdminTableFirme = () => {
   const [data, setData] = useState([]);
@@ -24,19 +27,11 @@ const AdminTableFirme = () => {
 
   const confirm = useConfirm();
   const handleCreateNewRow = async (values) => {
-    console.log(
-      values.denumire,
-      values.pret,
-      values.categorie,
-      values.descriere,
-      values.imageURL,
-      values.firma
-    );
     try {
       const res = await adaugaFirma(
         values.denumire,
-        values.data_inceput,
-        values.data_finalizare
+        values.data_inceput.format("DD/MM/YYYY"),
+        values.data_finalizare.format("DD/MM/YYYY")
       );
       console.log(res);
       data.push(res);
@@ -241,64 +236,89 @@ const AdminTableFirme = () => {
   );
 };
 export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
-  const [values, setValues] = useState(() =>
-    columns.reduce((acc, column) => {
-      acc[column.accessorFn ?? ""] = "";
-      return acc;
-    }, {})
-  );
 
-  const [isError, setIsError] = useState(false);
-  const [errorMessages, setErrorMessages] = useState("");
+  const validationSchema = yup.object({
+    denumire: yup.string().required("Denumirea este obligatorie"),
+    inceputContract: yup.date().required("Data de inceput este obligatorie"),
+    sfarsitContract: yup
+      .date()
+      .min(
+        yup.ref("inceputContract"),
+        "Te rog sa alegi o data mai mare decat data de inceput contract"
+      )
+      .required("Data de sfarsit este obligatorie"),
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    try {
-      if (values.data_sfarsit < values.data_inceput) {
-        throw Error;
-      }
+  const formik = useFormik({
+    initialValues: {
+      denumire: "",
+      inceputContract: dayjs().format('YYYY-MM-DD'),
+      sfarsitContract: dayjs().add(1, 'day').format('YYYY-MM-DD'),
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
       onSubmit(values);
       onClose();
-    } catch (err) {
-      setIsError(true);
-      setErrorMessages("Te rog introduce o data mai mare decat cea de inceput");
-    }
-    //put your validation logic here
-  };
+    },
+  });
 
   return (
     <Dialog open={open}>
       <DialogTitle textAlign="center">Adauga o firma noua</DialogTitle>
       <DialogContent>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={formik.handleSubmit}>
           <Stack
             sx={{
+              display: "flex",
+              alignItems: "flex-start",
               my: "0.5rem",
               width: "100%",
               minWidth: { xs: "300px", sm: "360px", md: "400px" },
               gap: "1.5rem",
             }}
           >
-            {columns.map((column) => (
-              <TextField
-                focused
-                error={isError}
-                helpperText={errorMessages}
-                type={column.type}
-                key={column.accessorKey || column.accessorFn}
-                label={column.header}
-                name={column.id}
-                onChange={(e) =>
-                  setValues({ ...values, [e.target.name]: e.target.value })
-                }
-              />
-            ))}
+            <TextField
+              fullWidth
+              key="denumire"
+              label="Denumire"
+              name="denumire"
+              value={formik.values.denumire}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.denumire && formik.errors.denumire}
+              error={formik.touched.denumire && Boolean(formik.errors.denumire)}
+            />
+            <TextField
+              fullWidth
+              type="date"
+              key="inceputContract"
+              label="Data Inceput Contract"
+              name="inceputContract"
+              value={formik.values.inceputContract}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.inceputContract && formik.errors.inceputContract}
+              error={formik.touched.inceputContract && Boolean(formik.errors.inceputContract)}
+            /> 
+            <TextField
+              fullWidth
+              type="date"
+              key="sfarsitContract"
+              label="Data Sfarsit Contract"
+              name="sfarsitContract"
+              value={formik.values.sfarsitContract}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.sfarsitContract && formik.errors.sfarsitContract}
+              error={formik.touched.sfarsitContract && Boolean(formik.errors.sfarsitContract)}
+            />
+            
           </Stack>
         </form>
       </DialogContent>
       <DialogActions sx={{ p: "1.25rem" }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button color="secondary" onClick={handleSubmit} variant="contained">
+        <Button color="secondary" type="submit" variant="contained">
           Creaza Firma Noua
         </Button>
       </DialogActions>

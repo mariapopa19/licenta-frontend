@@ -322,12 +322,16 @@ export const loaderCurier = async () => {
       const res = await comenziShip(token);
       return res;
     } catch (e) {
-      e.message === "jwt expired" || e.message === "jwt malformed"
-        ? redirect("/login")
-        : console.log(e.message);
+      if (e.message === "jwt expired" || e.message === "jwt malformed") {
+        return redirect("/login");
+      } else {
+        throw new Response("", {
+          status: 404,
+          statusText: e.message,
+        });
+      }
     }
   } else {
-    redirect("/login");
+    return redirect("/login");
   }
-  return null;
 };

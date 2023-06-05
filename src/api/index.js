@@ -57,12 +57,16 @@ export const schimbaParolaPas2 = async (token, parola) => {
 
 export const roluriUtilizator = async (token) => {
   try {
-    const res = await axios.get(generateURL(`auth/roluri/${token}`));
+    const res = await axios.get(generateURL(`auth/roluri`), {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return res.data;
   } catch (e) {
     throw Error(e.response.data.message);
   }
-}
+};
 
 export const produseAdmin = async () => {
   try {
@@ -259,7 +263,13 @@ export const utilizatoriAdmin = async () => {
   }
 };
 
-export const creazaUtilizatorAdmin = async (email, parola, nume, admin, curier) => {
+export const creazaUtilizatorAdmin = async (
+  email,
+  parola,
+  nume,
+  admin,
+  curier
+) => {
   try {
     const res = await axios.post(generateURL("admin/utilizator"), {
       email: email,
@@ -314,10 +324,32 @@ export const produsShop = async (produsId) => {
   }
 };
 
+export const categoriiProduseShop = async () => {
+  try {
+    const res = await axios.get(generateURL(`shop/produse-categorii`));
+    return res.data.categorii;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+}
+
+export const produseCategorieShop = async (categorieId) => {
+  try {
+    const res = await axios.get(generateURL(`shop/produse-categorie/${categorieId}`));
+    return res.data;
+  } catch (e) {
+    throw Error(e.response.data.message);
+  }
+}
+
 // * Cos de cumparaturi
 export const cosCumparaturi = async (token) => {
   try {
-    const res = await axios.get(generateURL(`shop/cos-cumparaturi/${token}`));
+    const res = await axios.get(generateURL("shop/cos-cumparaturi"), {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return res.data.produseCos;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -326,10 +358,17 @@ export const cosCumparaturi = async (token) => {
 
 export const adaugaInCos = async (token, produsId) => {
   try {
-    const res = await axios.post(generateURL("shop/cos-cumparaturi"), {
-      token: token,
-      prodId: produsId,
-    });
+    const res = await axios.post(
+      generateURL("shop/cos-cumparaturi"),
+      {
+        prodId: produsId,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
     return res.data.result;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -338,10 +377,17 @@ export const adaugaInCos = async (token, produsId) => {
 
 export const scoateProdusCos = async (token, produsId) => {
   try {
-    const res = await axios.post(generateURL("shop/scoate-produs-cos"), {
-      token: token,
-      prodId: produsId,
-    });
+    const res = await axios.post(
+      generateURL("shop/scoate-produs-cos"),
+      {
+        prodId: produsId,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
     return res.data.result;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -351,7 +397,12 @@ export const scoateProdusCos = async (token, produsId) => {
 export const stergeProdusCos = async (token, produsId) => {
   try {
     const res = await axios.delete(
-      generateURL(`shop/sterge-produs-cos-cumparaturi/${token}/${produsId}`)
+      generateURL(`shop/sterge-produs-cos-cumparaturi/${produsId}`),
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
     );
     return res.data.result;
   } catch (e) {
@@ -369,14 +420,21 @@ export const cardPayment = async (
   oraLivrare
 ) => {
   try {
-    const res = await axios.post(generateURL("shop/create-checkout-session"), {
-      token: token,
-      adresa: adresa,
-      oras: oras,
-      judet: judet,
-      ziLivrare: ziLivrare,
-      oraLivrare: oraLivrare,
-    });
+    const res = await axios.post(
+      generateURL("shop/create-checkout-session"),
+      {
+        adresa: adresa,
+        oras: oras,
+        judet: judet,
+        ziLivrare: ziLivrare,
+        oraLivrare: oraLivrare,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
     return res.data;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -386,7 +444,11 @@ export const cardPayment = async (
 // * Pagina cu detaliile personale
 export const comenziShop = async (token) => {
   try {
-    const res = await axios.get(generateURL(`shop/comenzi/${token}`));
+    const res = await axios.get(generateURL("shop/comenzi"), {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return res.data.comenzi;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -395,9 +457,11 @@ export const comenziShop = async (token) => {
 
 export const comandaShop = async (token, comandaId) => {
   try {
-    const res = await axios.get(
-      generateURL(`shop/comenzi/${token}/${comandaId}`)
-    );
+    const res = await axios.get(generateURL(`shop/comenzi/${comandaId}`), {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return res.data.comanda;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -406,7 +470,11 @@ export const comandaShop = async (token, comandaId) => {
 
 export const detaliiUtilizator = async (token) => {
   try {
-    const res = await axios.get(generateURL(`auth/user/${token}`));
+    const res = await axios.get(generateURL(`auth/user`), {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return res.data.result;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -415,10 +483,18 @@ export const detaliiUtilizator = async (token) => {
 
 export const modificaDetaliiUtilizaor = async (token, nume, email) => {
   try {
-    const res = await axios.patch(generateURL(`auth/user/${token}`), {
-      nume: nume,
-      email: email,
-    });
+    const res = await axios.patch(
+      generateURL(`auth/user`),
+      {
+        nume: nume,
+        email: email,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
     return res.data.result;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -427,7 +503,11 @@ export const modificaDetaliiUtilizaor = async (token, nume, email) => {
 
 export const comenziShip = async (token) => {
   try {
-    const res = await axios.get(generateURL(`ship/comenzi/${token}`));
+    const res = await axios.get(generateURL(`ship/comenzi`), {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return res.data.result;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -436,7 +516,11 @@ export const comenziShip = async (token) => {
 
 export const comenziShipDupaOras = async (token, oras) => {
   try {
-    const res = await axios.get(generateURL(`ship/comenzi/${token}/${oras}`));
+    const res = await axios.get(generateURL(`ship/comenzi/${oras}`), {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return res.data.comenzi;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -445,9 +529,11 @@ export const comenziShipDupaOras = async (token, oras) => {
 
 export const comandaShip = async (token, comandaId) => {
   try {
-    const res = await axios.get(
-      generateURL(`ship/comanda/${token}/${comandaId}`)
-    );
+    const res = await axios.get(generateURL(`ship/comanda/${comandaId}`), {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return res.data.comanda;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -456,10 +542,17 @@ export const comandaShip = async (token, comandaId) => {
 
 export const preiaComanda = async (token, comandaId) => {
   try {
-    const res = await axios.post(generateURL("ship/comanda"), {
-      token: token,
-      comandaId: comandaId,
-    });
+    const res = await axios.post(
+      generateURL("ship/comanda"),
+      {
+        comandaId: comandaId,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
     return res.data.comanda;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -468,10 +561,17 @@ export const preiaComanda = async (token, comandaId) => {
 
 export const comandaFinalizataShipper = async (token, comandaId) => {
   try {
-    const res = await axios.post(generateURL("ship/comanda-finalizata"), {
-      token: token,
-      comandaId: comandaId,
-    });
+    const res = await axios.post(
+      generateURL("ship/comanda-finalizata"),
+      {
+        comandaId: comandaId,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
     return res.data.comanda;
   } catch (e) {
     throw Error(e.response.data.message);
@@ -485,4 +585,4 @@ export const judeteRomaniaLocal = async () => {
   } catch (e) {
     throw Error(e.response.data.message);
   }
-}
+};

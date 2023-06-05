@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  FormHelperText,
   IconButton,
   InputLabel,
   MenuItem,
@@ -27,6 +28,8 @@ import {
   produseAdmin,
 } from "../../api";
 import { useConfirm } from "material-ui-confirm";
+import * as yup from "yup";
+import { useFormik } from "formik";
 
 const AdminTableProduse = () => {
   const [data, setData] = useState([]);
@@ -317,94 +320,154 @@ export const CreateNewProductModal = ({
   categorii,
   firme,
 }) => {
-  const [values, setValues] = useState(() =>
-    columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ""] = "";
-      return acc;
-    }, {})
-  );
-  const [firmaState, setFirmaState] = useState("");
-  const [categorieState, setCategorieState] = useState("");
+  const validationSchema = yup.object({
+    denumire: yup.string().required("Denumirea este obligatorie"),
+    pret: yup
+      .number()
+      .typeError("Trebuie sa fie un numar valid")
+      .positive("Pretul trebuie sa fie pozitiv")
+      .required("Pretul este obligatoriu"),
+    imageURL: yup
+      .string()
+      .url("Trebuie sa fie un URL vakid")
+      .required("ImageURL este obligatoriu"),
+    descriere: yup
+      .string()
+      .min(10, "Trebuie sa aiba minim 10 caractere")
+      .required("Descrirea este obligatorie"),
+    categorie: yup.string().required("Categoria este obligatorie"),
+    firma: yup.string().required("Firma este obligatorie"),
+  });
 
-  const handleSubmit = () => {
-    //put your validation logic here
-    onSubmit(values);
-    onClose();
-  };
+  const formik = useFormik({
+    initialValues: {
+      denumire: "",
+      pret: "",
+      imageURL: "",
+      descriere: "",
+      categorie: "",
+      firma: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      onSubmit(values);
+      onClose();
+    },
+  });
 
   return (
     <Dialog open={open}>
       <DialogTitle textAlign="center">Creaza produs nou</DialogTitle>
       <DialogContent>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={formik.handleSubmit}>
           <Stack
             sx={{
+              display: "flex",
+              alignItems: "flex-start",
               my: "0.5rem",
               width: "100%",
               minWidth: { xs: "300px", sm: "360px", md: "400px" },
               gap: "1.5rem",
             }}
           >
-            {columns.map((column) =>
-              column.id === "firma" ? (
-                <FormControl fullWidth>
-                  <InputLabel id="firma">Firma</InputLabel>
-                  <Select
-                    id="firma"
-                    label="Firma"
-                    name={column.id}
-                    value={firmaState}
-                    onChange={(e) => {
-                      setFirmaState(e.target.value);
-                      setValues({ ...values, [e.target.name]: e.target.value });
-                    }}
-                  >
-                    {firme.map((firma) => (
-                      <MenuItem value={firma.denumire}>
-                        {firma.denumire}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              ) : column.id === "categorie" ? (
-                <FormControl fullWidth>
-                  <InputLabel id="categorie">Categorie</InputLabel>
-                  <Select
-                    id="categorie"
-                    label="Categorie"
-                    name={column.id}
-                    value={categorieState}
-                    onChange={(e) => {
-                      setCategorieState(e.target.value);
-                      setValues({ ...values, [e.target.name]: e.target.value });
-                    }}
-                  >
-                    {categorii.map((categorie) => (
-                      <MenuItem value={categorie.denumire}>
-                        {categorie.denumire}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              ) : (
-                <TextField
-                  key={column.accessorKey}
-                  label={column.header}
-                  name={column.id}
-                  multiline={column.multiline}
-                  maxRows={4}
-                  onChange={(e) =>
-                    setValues({ ...values, [e.target.name]: e.target.value })
-                  }
-                />
-              )
-            )}
+            <TextField
+              fullWidth
+              key="denumire"
+              label="Denumire"
+              name="denumire"
+              value={formik.values.denumire}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.denumire && formik.errors.denumire}
+              error={formik.touched.denumire && Boolean(formik.errors.denumire)}
+            />{" "}
+            <TextField
+              fullWidth
+              key="pret"
+              label="Pret"
+              name="pret"
+              value={formik.values.pret}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.pret && formik.errors.pret}
+              error={formik.touched.pret && Boolean(formik.errors.pret)}
+            />{" "}
+            <TextField
+              fullWidth
+              key="imageURL"
+              label="ImageURL"
+              name="imageURL"
+              value={formik.values.imageURL}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.imageURL && formik.errors.imageURL}
+              error={formik.touched.imageURL && Boolean(formik.errors.imageURL)}
+            />{" "}
+            <TextField
+              fullWidth
+              key="descriere"
+              label="Descriere"
+              name="descriere"
+              value={formik.values.descriere}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.descriere && formik.errors.descriere}
+              error={
+                formik.touched.descriere && Boolean(formik.errors.descriere)
+              }
+            />
+            <FormControl
+              fullWidth
+              error={
+                formik.touched.categorie && Boolean(formik.errors.categorie)
+              }
+            >
+              <InputLabel id="categorie">Categorie</InputLabel>
+              <Select
+                id="categorie"
+                label="Categorie"
+                name="categorie"
+                value={formik.categorie}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                helperText={formik.touched.categorie && formik.errors.categorie}
+              >
+                {categorii.map((categorie) => (
+                  <MenuItem value={categorie.denumire}>
+                    {categorie.denumire}
+                  </MenuItem>
+                ))}
+              </Select>
+              {formik.touched.categorie && formik.errors.categorie ? (
+                <FormHelperText>{formik.errors.categorie}</FormHelperText>
+              ) : null}
+            </FormControl>
+            <FormControl fullWidth error={formik.touched.firma && Boolean(formik.errors.firma)}>
+              <InputLabel id="firma">Firma</InputLabel>
+              <Select
+                id="firma"
+                label="Firma"
+                name="firma"
+                value={formik.firma}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                helperText={formik.touched.firma && formik.errors.firma}
+                
+              >
+                {firme.map((firma) => (
+                  <MenuItem value={firma.denumire}>{firma.denumire}</MenuItem>
+                ))}
+              </Select>
+              {formik.touched.firma && formik.errors.firma ? (
+                <FormHelperText>{formik.errors.firma}</FormHelperText>
+              ) : null}
+            </FormControl>
           </Stack>
         </form>
       </DialogContent>
       <DialogActions sx={{ p: "1.25rem" }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button color="secondary" onClick={handleSubmit} variant="contained">
+        <Button color="secondary" type="submit" variant="contained">
           Creaza Produs Nou
         </Button>
       </DialogActions>

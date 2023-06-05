@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Avatar from "@mui/material/Avatar";
-import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -8,60 +7,35 @@ import Container from "@mui/material/Container";
 
 import { creareUtilizator } from "../api/index";
 import {
-  createTheme,
+  CssBaseline,
   IconButton,
   InputAdornment,
-  styled,
   ThemeProvider,
+  createTheme,
+  styled,
 } from "@mui/material";
 import { RoundedTextField } from "../components/TextField";
 import { RoundedButton } from "../components/RoundedButton";
-import { Link, NavLink } from "react-router-dom";
+import {  NavLink } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Popa Maria
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-const theme = createTheme({
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          backgroundColor: "#ffdde1",
-          backgroundImage: `linear-gradient(to right, #ffdde1, #ee9ca7)`,
-        },
-      },
-    },
-  },
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#ff4081",
-    },
-  },
-  typography: {
-    fontFamily: "'Inter', sans-serif",
-  },
-});
+import { GeneralContext } from "../context/GeneralContext";
 
 const Titlu = styled(Typography)`
   font-family: "Lobster", cursive;
   font-weight: 700;
+`;
+
+const NavLinkCustom = styled(NavLink)`
+  color: inherit;
+  text-decoration: none;
+
+  &:focus,
+  &:hover,
+  &:visited,
+  &:link,
+  &:active {
+    text-decoration: none;
+  }
 `;
 
 export default function SignUp() {
@@ -72,6 +46,28 @@ export default function SignUp() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const {theme} = useContext(GeneralContext)
+
+
+  const newTheme = createTheme({
+    ...theme.theme,
+    components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          body:
+            theme.mode === "dark"
+              ? {
+                  backgroundColor: "#ab5f7b",
+                  backgroundImage: `linear-gradient(to right, #ab5f7b, #3b0322)`,
+                }
+              : {
+                  backgroundColor: "#ffdde1",
+                  backgroundImage: `linear-gradient(to right, #ffdde1, #ee9ca7)`,
+                },
+        },
+      },
+    },
+  });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -85,12 +81,12 @@ export default function SignUp() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={newTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: '8rem',
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -106,7 +102,7 @@ export default function SignUp() {
             component="form"
             noValidate
             onSubmit={handleSubmit}
-            sx={{ mt: 3 }}
+            sx={{ marginTop: '3rem' }}
           >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -182,21 +178,20 @@ export default function SignUp() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ marginTop: '3rem', marginBottom: '1rem' }}
             >
               Înregistrare
             </RoundedButton>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <NavLink to="/login" end>
+                <NavLinkCustom to="/login" end>
                   Ai deja cont? Click aici
-                </NavLink>
+                </NavLinkCustom>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
-    </ThemeProvider>
+      </ThemeProvider>
   );
 }

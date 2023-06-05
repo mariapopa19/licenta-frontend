@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import ComandaItem from "./ComandaItem";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import { comenziShop } from "../../api";
 
 const ComenzileMele = () => {
@@ -46,3 +46,30 @@ const ComenzileMele = () => {
 };
 
 export default ComenzileMele;
+
+export const loaderComenzileMele = async () => {
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+
+  if (token) {
+    try {
+      const res = await comenziShop(token);
+      return res;
+    } catch (e) {
+      if (e.message === "jwt expired" || e.message === "jwt malformed") {
+        return redirect("/login");
+      } else {
+        throw new Response("", {
+          status: 404,
+          statusText: e.message,
+        });
+      }
+    }
+  } else {
+    return redirect("/login");
+  }
+};

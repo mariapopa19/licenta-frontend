@@ -25,8 +25,17 @@ function NavBar(props) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-  const { produsAdaugatInCos, setProdusAdaugatInCos, logOut, setTheme, theme,userRoles, setUserRoles } =
-    React.useContext(GeneralContext);
+  const {
+    produsAdaugatInCos,
+    setProdusAdaugatInCos,
+    logOut,
+    setTheme,
+    theme,
+    userRoles,
+    setUserRoles,
+    lightTheme,
+    darkTheme,
+  } = React.useContext(GeneralContext);
   let token = localStorage.getItem("token");
   if (token) {
     token = localStorage.getItem("token");
@@ -75,15 +84,26 @@ function NavBar(props) {
         admin: res.admin,
         curier: res.curier,
       });
-    } 
+    }
   };
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    setTheme(
+      theme.mode === "light"
+        ? { mode: "dark", theme: darkTheme }
+        : { mode: "light", theme: lightTheme }
+    );
+    localStorage.setItem(
+      "theme",
+      theme.mode === "light"
+        ? JSON.stringify({ mode: "dark", theme: darkTheme })
+        : JSON.stringify({ mode: "light", theme: lightTheme })
+    );
   };
 
+  // console.log(localStorage.getItem("theme"));
   React.useEffect(() => {
     bagdeCosCumparaturi();
-    paginiDisponibile()
+    paginiDisponibile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -297,7 +317,11 @@ function NavBar(props) {
                 edge="end"
                 sx={{ ml: 1 }}
               >
-                {theme === "light" ? <Brightness7Icon /> : <Brightness4Icon />}
+                {theme.mode === "light" ? (
+                  <Brightness7Icon />
+                ) : (
+                  <Brightness4Icon />
+                )}
               </IconButton>
             </Box>
           </Box>

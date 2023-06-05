@@ -15,6 +15,8 @@ import {
 import { Delete, Edit } from "@mui/icons-material";
 import { adaugaCategorie, categoriiAdmin, deleteCategorie, modificaCategorie } from "../../api";
 import { useConfirm } from "material-ui-confirm";
+import * as yup from "yup";
+import { useFormik } from "formik";
 
 const AdminTableCategorii = () => {
   const [data, setData] = useState([]);
@@ -198,24 +200,28 @@ const AdminTableCategorii = () => {
   );
 };
 export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
-  const [values, setValues] = useState(() =>
-    columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ""] = "";
-      return acc;
-    }, {})
-  );
+  const validationSchema = yup.object({
+    denumire: yup.string().required("Denumirea este obligatorie"),
+  });
 
-  const handleSubmit = () => {
-    //put your validation logic here
-    onSubmit(values);
-    onClose();
-  };
+  const formik = useFormik({
+    initialValues: {
+      denumire: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      onSubmit(values);
+      onClose();
+    },
+  });
+
+;
 
   return (
     <Dialog open={open}>
       <DialogTitle textAlign="center">Adauga o categorie noua</DialogTitle>
       <DialogContent>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={formik.handleSubmit}>
           <Stack
             sx={{
               my: "0.5rem",
@@ -224,22 +230,23 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
               gap: "1.5rem",
             }}
           >
-            {columns.map((column) => (
-              <TextField
-                key={column.accessorKey}
-                label={column.header}
-                name={column.id}
-                onChange={(e) =>
-                  setValues({ ...values, [e.target.name]: e.target.value })
-                }
-              />
-            ))}
+            <TextField
+              fullWidth
+              key="denumire"
+              label="Denumire"
+              name="denumire"
+              value={formik.values.denumire}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.denumire && formik.errors.denumire}
+              error={formik.touched.denumire && Boolean(formik.errors.denumire)}
+            />
           </Stack>
         </form>
       </DialogContent>
       <DialogActions sx={{ p: "1.25rem" }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button color="secondary" onClick={handleSubmit} variant="contained">
+        <Button color="secondary" type='submit' variant="contained">
           Creaza O Categorie Noua
         </Button>
       </DialogActions>

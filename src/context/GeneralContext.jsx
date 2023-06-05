@@ -24,6 +24,13 @@ const GeneralProvider = (props) => {
           disableRipple: true,
         },
       },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "#f5f5f5",
+          },
+        },
+      },
     },
   });
 
@@ -61,7 +68,12 @@ const GeneralProvider = (props) => {
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
   const [produsAdaugatInCos, setProdusAdaugatInCos] = useState(0);
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState(
+    JSON.parse(localStorage.getItem("theme")) || {
+      mode: "light",
+      theme: lightTheme,
+    }
+  );
   const [userRoles, setUserRoles] = useState({
     admin: false,
     curier: false,
@@ -70,8 +82,8 @@ const GeneralProvider = (props) => {
   const navigate = useNavigate();
 
   const logOut = async () => {
-    localStorage.clear();
-    sessionStorage.clear();
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setProdusAdaugatInCos(0);
     setUserRoles({
       ...userRoles,
@@ -101,8 +113,8 @@ const GeneralProvider = (props) => {
         setUserRoles,
       }}
     >
-      <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
-        <CssBaseline />
+      <ThemeProvider theme={theme.mode === "light" ? lightTheme : darkTheme}>
+        <CssBaseline enableColorScheme />
         {props.children}
         <Outlet />
       </ThemeProvider>

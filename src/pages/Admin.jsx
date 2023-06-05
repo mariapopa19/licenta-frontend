@@ -5,6 +5,8 @@ import AdminTableComenzi from "../components/AdminPage/AdmnTableComenzi";
 import AdminTableCategorii from "../components/AdminPage/AdminTableCategorii";
 import AdminTableUsers from "../components/AdminPage/AdminTableUsers";
 import NavBar from "../layout/NavBar";
+import { redirect } from "react-router-dom";
+import { roluriUtilizator } from "../api";
 
 export default function Admin() {
   return (
@@ -14,7 +16,13 @@ export default function Admin() {
       </Grid>
       <Grid item xs={12} sm={10} md={10} container rowSpacing={3}>
         <Grid item md>
-          <Typography variant="h5" sx={{ fontWeight: "bold", width: {lg: '1200px', md: '900px', sm: '600px', xs: '0px'} }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: "bold",
+              width: { lg: "1200px", md: "900px", sm: "600px", xs: "0px" },
+            }}
+          >
             Utilizatori
           </Typography>
         </Grid>
@@ -42,9 +50,15 @@ export default function Admin() {
           <AdminTableComenzi />
         </Grid>
       </Grid>
-       <Grid item xs={12} sm={10} md={10}  container spacing={3}>
+      <Grid item xs={12} sm={10} md={10} container spacing={3}>
         <Grid item md>
-          <Typography variant="h5" sx={{ fontWeight: "bold", width: {lg: '1200px', md: '900px', sm: '600px', xs: '0px'} }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: "bold",
+              width: { lg: "1200px", md: "900px", sm: "600px", xs: "0px" },
+            }}
+          >
             Firme
           </Typography>
         </Grid>
@@ -52,9 +66,15 @@ export default function Admin() {
           <AdminTableFirme />
         </Grid>
       </Grid>
-      <Grid item xs={12} sm={10} md={10}  container spacing={3}>
+      <Grid item xs={12} sm={10} md={10} container spacing={3}>
         <Grid item md>
-          <Typography variant="h5" sx={{ fontWeight: "bold", width: {lg: '1200px', md: '900px', sm: '600px', xs: '0px'} }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: "bold",
+              width: { lg: "1200px", md: "900px", sm: "600px", xs: "0px" },
+            }}
+          >
             Categorii
           </Typography>
         </Grid>
@@ -65,3 +85,34 @@ export default function Admin() {
     </Grid>
   );
 }
+
+export const loaderAdmin = async () => {
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+
+  if (token) {
+    try {
+      const res = await roluriUtilizator(token);
+      if (res.admin) {
+        return res;
+      } else {
+        throw Error("Utilizatorul nu este admin");
+      }
+    } catch (e) {
+      if (e.message === "jwt expired" || e.message === "jwt malformed") {
+        return redirect("/login");
+      } else {
+        throw new Response("", {
+          status: 404,
+          statusText: e.message,
+        });
+      }
+    }
+  } else {
+    return redirect("/login");
+  }
+};

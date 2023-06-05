@@ -3,7 +3,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { Box, Divider } from "@mui/material";
 import { Fragment } from "react";
-import { useLoaderData, useParams } from "react-router-dom";
+import { redirect, useLoaderData, useParams } from "react-router-dom";
 import { comandaShop } from "../../api";
 
 const OrderDetailsContainer = styled(Paper)({
@@ -134,14 +134,21 @@ export const loadComanda = async ({ params }) => {
     token = sessionStorage.getItem("token");
   }
   const comandaId = params.comandaId;
-
-  try {
-    const res = await comandaShop(token, comandaId);
-    return res;
-  } catch (e) {
-    throw new Response("", {
-      status: 404,
-      statusText: e.message,
-    });
+  if (token) {
+    try {
+      const res = await comandaShop(token, comandaId);
+      return res;
+    } catch (e) {
+      if (e.message === "jwt expired" || e.message === "jwt malformed") {
+        return redirect("/login");
+      } else {
+        throw new Response("", {
+          status: 404,
+          statusText: e.message,
+        });
+      }
+    }
+  } else {
+    return redirect("/login");
   }
 };

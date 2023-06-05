@@ -150,17 +150,7 @@ const ContulMeu = () => {
                 {selectedMenuItem}
               </Typography>
               <Divider sx={{ mb: 3 }} />
-              {/* Aici se va adauga componenta corespunzatoare selectiei din meniu */}
               <Outlet />
-              {/* {selectedMenuItem === "Comenzile Mele" ? (
-                <Link to="comenzi" />
-              ) : selectedMenuItem === "Contul Meu" ? (
-                <Link to="detalii-utilizator" />
-              ) : selectedMenuItem === "Schimba Parola" ? (
-                <SchimbaParola />
-              ) : selectedMenuItem === "Deconectare" ? (
-                logOut()
-              ) : null} */}
             </Box>
           </Box>
         </Grid>

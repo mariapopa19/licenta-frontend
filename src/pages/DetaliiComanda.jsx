@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { cardPayment, cosCumparaturi, judeteRomaniaLocal } from "../api";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import NavBar from "../layout/NavBar";
 import StepperComponent from "../layout/Stepper";
 import Loading from "../layout/Loading";
@@ -34,9 +34,7 @@ const Total = styled(Typography)({
   fontWeight: "bold",
 });
 
-
 // !!! Cand vrei sa faci plata sa nu uiti sa dechizi terminalul cu ruta pentru webhook 'stripe listen --forward-to localhost:4000/shop/webhook'
-
 
 const DetaliiComandaCheckout = () => {
   const [oras, setOras] = useState("");
@@ -210,7 +208,7 @@ const DetaliiComandaCheckout = () => {
             onChange={(e) => setAdresa(e.target.value)}
           />
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ro">
-            <Stack spacing={2} width={500}>
+            <Stack spacing={2}>
               <DatePicker
                 label="Data"
                 value={dataSelectata}
@@ -271,3 +269,30 @@ const DetaliiComandaCheckout = () => {
 };
 
 export default DetaliiComandaCheckout;
+
+export const loaderDetaliiComanda = async () => {
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+
+  if (token) {
+    try {
+      const res = await cosCumparaturi(token);
+      return res;
+    } catch (e) {
+      if (e.message === "jwt expired" || e.message === "jwt malformed") {
+        return redirect("/login");
+      } else {
+        throw new Response("", {
+          status: 404,
+          statusText: e.message,
+        });
+      }
+    }
+  } else {
+    return redirect("/login");
+  }
+};

@@ -284,20 +284,6 @@ export const CreateNewProductModal = ({ open, columns, onClose, onSubmit }) => {
     },
   });
 
-  // const [values, setValues] = useState({
-  //   nume: "",
-  //   email: "",
-  //   curier: false,
-  //   admin: false,
-  //   parola: "",
-  // });
-
-  // const handleSubmit = () => {
-  //   //put your validation logic here
-  //   onSubmit(values);
-  //   onClose();
-  // };
-
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);

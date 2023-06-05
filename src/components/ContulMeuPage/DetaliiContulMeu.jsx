@@ -3,7 +3,7 @@ import { RoundedTextField } from "../TextField";
 import { RoundedButton } from "../RoundedButton";
 import { useEffect, useState } from "react";
 import { detaliiUtilizator, modificaDetaliiUtilizaor } from "../../api";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 
 const DetaliiContulMeu = () => {
   let token = localStorage.getItem("token");
@@ -13,8 +13,8 @@ const DetaliiContulMeu = () => {
     token = sessionStorage.getItem("token");
   }
   const navigate = useNavigate();
-  const [nume, setNume] = useState('');
-  const [email, setEmail] = useState('');
+  const [nume, setNume] = useState("");
+  const [email, setEmail] = useState("");
 
   const onClickSalveaza = async (nume, email) => {
     if (token) {
@@ -50,9 +50,9 @@ const DetaliiContulMeu = () => {
   };
 
   useEffect(() => {
-    fetchDetaliiUtilizator()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    fetchDetaliiUtilizator();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Grid container>
@@ -113,3 +113,28 @@ const DetaliiContulMeu = () => {
 };
 
 export default DetaliiContulMeu;
+
+export const loaderDeteliiContulMeu = async () => {
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+
+  if (token) {
+    try {
+      const res = await detaliiUtilizator(token);
+      return res;
+    } catch (e) {
+      if (e.message === "jwt expired" || e.message === "jwt malformed") {
+        return redirect("/login");
+      } else {
+        throw new Response("", {
+          status: 404,
+          statusText: e.message,
+        });
+      }
+    }
+  }
+};

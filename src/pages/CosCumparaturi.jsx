@@ -10,7 +10,7 @@ import {
 import { Grid, Typography, Divider, Button, styled } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ItemCart from "../components/ItemCart";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import { GeneralContext } from "../context/GeneralContext";
 import StepperComponent from "../layout/Stepper";
 
@@ -146,7 +146,7 @@ const CosCumparaturi = () => {
       <Grid item md={12} sm={12} xs={12}>
         <NavBar />
       </Grid>
-      <Grid item md={12} sm={12} xs={12} >
+      <Grid item md={12} sm={12} xs={12}>
         <StepperComponent />
       </Grid>
       <Grid item md={10} sm={10} xs={12} sx={{ mt: 10, mx: 10 }}>
@@ -230,3 +230,30 @@ const CosCumparaturi = () => {
 };
 
 export default CosCumparaturi;
+
+export const loaderCosCumparaturi = async () => {
+  let token = localStorage.getItem("token");
+  if (token) {
+    token = localStorage.getItem("token");
+  } else {
+    token = sessionStorage.getItem("token");
+  }
+
+  if (token) {
+    try {
+      const res = await cosCumparaturi(token);
+      return res;
+    } catch (e) {
+      if (e.message === "jwt expired" || e.message === "jwt malformed") {
+        return redirect("/login");
+      } else {
+        throw new Response("", {
+          status: 404,
+          statusText: e.message,
+        });
+      }
+    }
+  } else {
+    redirect("/login");
+  }
+};
