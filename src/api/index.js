@@ -23,6 +23,15 @@ export const creareUtilizator = async (email, parola, nume) => {
   }
 };
 
+export const verificaTokenEmail = async (token) => {
+  try {
+    const res = await axios.get(generateURL(`auth/verify/${token}`));
+    return res.data;
+  } catch (err) {
+    throw Error(err.response.data.message);
+  }
+}
+
 export const login = async (email, parola) => {
   try {
     const res = await axios.post(generateURL("auth/login"), {

@@ -4,6 +4,7 @@ import {
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
+  redirect,
 } from "react-router-dom";
 import "./App.css";
 // import Navbar from './layout/NavBar';
@@ -43,6 +44,7 @@ import ToateProdusele, {
 import ProduseCategorie, {
   loaderProduseCategorie,
 } from "./components/HomePage/ProduseCategorie";
+import { verificaTokenEmail } from "./api";
 const Home = lazy(() => import("./pages/Home"));
 
 const router = createBrowserRouter(
@@ -70,6 +72,23 @@ const router = createBrowserRouter(
       <Route path="/resetare-parola/:token" element={<SchimbareParola />} />
 
       <Route path="/signup" element={<SignUp />} />
+      <Route
+        path="verificare-email/:token"
+        loader={async ({ params }) => {
+          try {
+            const res = await verificaTokenEmail(params.token);
+            if (res.message === "Utilizator creat!") {
+              return redirect("/login");
+            } 
+          } catch (e) {
+            console.log(e);
+            throw new Response("", {
+              status: 404,
+              statusText: "Not found",
+            });
+          }
+        }}
+      />
       <Route path="/admin" loader={loaderAdmin} element={<Admin />} />
       <Route
         path="/cos-cumparaturi"
